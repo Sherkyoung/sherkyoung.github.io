@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 【译】FloodLight官网开发者文档一
-description: 【译】FloodLight官网开发者文档一
+title: 【译】FloodLight官网开发者文档三
+description: 【译】FloodLight官网开发者文档三
 category: blog
 ---
 
@@ -11,579 +11,855 @@ category: blog
 博客地址：<http://sherkyoung.github.io/>  
 内容系本人学习、研究和总结，如有雷同，实属荣幸！
 
-#用户文档
-##控制器
-Floodlight不仅仅是一个支持OpenFLow协议的控制器（FloodlightCOntroller），也是一个基于Floodlight控制器的应用集。
-当用户在OpenFLow网络上运行各种应用程序的时候，Floodlight控制器实现了对OpenFLow网络的监控和查询功能。图0.0显示了Floodlight不同模块之间的关系，这些应用程序构建成java模块，和Floodlight一起编译。同时这些应用程序都是基于REST API的。
-当运行floodlight时，控制器和一组java应用模块（这些会在floodlight属性文件中载入）开始运行。REST API通过REST端口（默认8080）对所有的运行中的模块开放。
-###Configuration HOWTO
-####选择加载模块
-Floodlight可以配置载入不同的模块以适应不停地应用。配置不同的载入模块之后必须重启生效。目前对于Floodlight模块的配置都是通过需在启动时加载的一个配置文件的修改实现的。
-简单的说，用户可以通过以下步骤，找到或控制Floodlight当前的配置:
+#开发者文档
+##控制器模块
+###简介：
+控制器模块实现了大多数应用程序常用的一些功能，例如：
 
-* 打开 src/main/resources/META-INF/services/net.floodlightcontroller.core.module.IFloodlightModule文件，就可以查看所有在floodlight.jar二进制编译中的模块编译。
-* 打开src/main/resources/floodlightdefault.properties文件或者其他自定义属性文件，查看文件中选择加载/运行模块。这些文件时是配置某些启动时参数的地方，例如：REST  API服务和WEB UI端口（8080）、交换机连接OpenFlow端口（6633）、默认的超时值等。
-* 如果在Eclipse或命令行（java -jar floodlight.jar）运行Floodlight，默认情况下加载默认属性文件。详细情况可以查看程序参数包括 -cf  some_properties_file文件。
-* 如果在Floodlight-vm上运行的Floodlight，floodlight.jar是按照 /opt/floodlight/floodlight/configuration/floodlight.properties instead of floodlightdefault.properties文件，作为服务载入
-* 果需要修改默认值，停止Floodlight，更新以上所说的属性文件并重启。
-* 如果自定义新的模块更新上述的两个文件并重启生效。
+* 发现和揭露网络状态和事件
+* 实现控制器和网络交换机的通讯
+* 控制Floodlight模块以及资源共享，如存储、线程、测试
+* 实现一个web UI以及调试服务器
+ 
+FloodLight目前已经实现的控制器模块
+FloodlightProvider
+描述：
+FloodlightProvider提供了两个主要部分的功能，它处理交换机之间的连接并且将OpenFlow的消息转化成其他模块可以监听的事件。第二个主要的功能，它决定某些特定的OpenFlow消息（即PacketIn，FlowRemoved，PortStatus等）被分派到该侦听消息的模块的顺序。然后模块可以决定允许该消息进入下一个监听对象或停止处理消息。
+ 
+提供的服务：
 
-虽然大多数的应用都是按照默认属性配置运行，但是下面的应用程序需要一组特定的模块，因此需要一个特定的配置文件（由于某些模块之间不兼容）来运行。
+* IFloodlightProviderService
+ 
+服务依赖性：
 
-* OpenStack Quantum plugin：需要和src/main/resources/quantum.properties文件一起运行
-* Forwarding和StaticFlowEntryPusher：这两个模块都是默认加载的，但有时你只需要加载其中的一个来实现应用程序的功能。例如，你想要一个完全自动配置的网络并且不会有转发反应，因此只需要StaticFlowEntryPusher模块而禁止Forwarding模块。
- 
-####控制日志级别
-在控制台显示的调试信息有时是很有帮助的，但有时又会显得十分繁杂。Floodlight使用org.slf4j.Logger模块，将日志信息划分不同的等级。同时，日志等级是可控的。在默认情况下，Floodlight显示了所有的日志等级。为了控制日志等级，可以向JVM传递以下参数：
-java -Dlogback.configurationFile=logback.xml -jar floodlight.jar
-如果实在Eclipse下运行的Floodlight，点击运行->运行/调试配置->参数->VM参数，在这里添加 -Dlogback.configurationFile=logback.xml
-Xml文件已经包含在Floodlight根目录中。
+* IStorageSourceService
+* IPktinProcessingTimeService
+* IRestApiService
+* ICounterStoreService
+* IThreadPoolService
 
-	<configuration scan="true">
-	  <appender name="STDOUT">
-		<encoder>
-		  <pattern>%level [%logger:%thread] %msg%n</pattern>
-		</encoder>
-	  </appender>
-	  <root level="INFO">
-		<appender-ref ref="STDOUT" />
-	  </root>
-	  <logger name="org" level="WARN"/>
-	  <logger name="LogService" level="WARN"/> <!-- Restlet access logging -->
-	  <logger name="net.floodlightcontroller" level="INFO"/>
-	  <logger name="net.floodlightcontroller.logging" level="WARN"/> 
-	</configuration>
+Java实现位置:
+net.floodlightcontroller.core.FloodlightProvider.
  
-在这个例子中，net,floodlightcontroller包含了所有的floodlight模块，并且具有日志记录级别的信息，因此调试信息并不会出现在控制台中。你可以在logxml文件中指定INFO，WARN和DEBUG的级别。
-###监听地址和端口配置
-为了改变主机地址或监听特定服务的端口号，可以在属性配置文件中使用以下的配置参数：
-
-	net.floodlightcontroller.restserver.RestApiServer.host
-	net.floodlightcontroller.restserver.RestApiServer.port
-	net.floodlightcontroller.core.internal.FloodlightProvider.openflowhost
-	net.floodlightcontroller.core.internal.FloodlightProvider.openflowport
-	net.floodlightcontroller.jython.JythonDebugInterface.host
-	net.floodlightcontroller.jython.JythonDebugInterface.port
-	
-默认的属性配置文件（例如：`floodlightdefault.properties`）
- 
- 
- 
-###Floodlight REST API
-####虚拟网络过滤器的REST API
-![](/images/2014-05-31-floodlight-develop/01.png)
- 
-Curl使用样例
-创建一个名字是“VirtualNetwork1”的虚拟网络，ID是“Networkid1”，网关是“10.0.0.7”，tenant是“默认”（目前是忽略的）：
-
-	curl -X PUT -d '{ "network": { "gateway": "10.0.0.7", "name": "virtualNetwork1" } }' http://localhost:8080/networkService/v1.1/tenants/default/networks/NetworkId1
-
-添加一个主机到VirtualNetwork1，MAC地址为“00:00:00:00:00:08”端口为“port1”
-	
-	curl -X PUT -d '{"attachment": {"id": "NetworkId1", "mac": "00:00:00:00:00:08"}}' http://localhost:8080/networkService/v1.1/tenants/default/networks/NetworkId1/ports/port1/attachment
-  
-####StaticFlow Pusher API（新）
-#####什么是Static Flow Pusher？
-Static Flow Pusher是Floodlight的一个模块，通过REST API形式向外曝露，这个接口允许用户手动向OpenFlow网络中插入流表。
- 
-#####主动和被动流插入
-OpenFlow支持两种流插入方式：主动式和被动式。当数据包到达OpenFlow交换机但未成功匹配流表时发生被动式流表插入。这个数据包将会被发送到控制器，控制器对数据包进行分析评估，添加相应的流表并允许交换机继续该数据包的转发。另外，也可以在数据包到达交换机之前，控制器可以主动地插入相应流表。
-Floodlight支持这两种的流表插入方式。Static Flow Pusher对于主动插入流表的方式很有帮助。
-注意，在默认情况下，Floodlight载入的转发模块是被动插入流表模式的。如果只使用静态流表，就必须将Forwarding模块从floodlight.properties文件中删除。
- 
-#####使用方法
-API总结
-![](/images/2014-05-31-floodlight-develop/05.png) 
-添加一个静态流表
-Static Flow Pusher是通过REST API方式接入，所以有很多访问方式。例如：要在switch1中插入一个流表，使得port1进入的数据包从port2转发出去。这一操作可以通过使用简单的curl命令实现。第二个命令将显示流表设置。
-	
-	curl -d '{"switch": "00:00:00:00:00:00:00:01", "name":"flow-mod-1", "priority":"32768", "ingress-port":"1","active":"true","actions":"output=2"}' http://<controller_ip>:8080/wm/staticflowentrypusher/json
-	curl http://<controller_ip>:8080/wm/core/switch/1/flow/json;
- 
-删除静态流表
-通过发送包含流表名称的HTTP  DELETE来删除静态流表
-	
-	curl -X DELETE -d '{"name":"flow-mod-1"}' http://<controller_ip>:8080/wm/staticflowentrypusher/json
- 
-流表项属性
-![](/images/2014-05-31-floodlight-develop/06.png) 
-
-操作域的操作选项
-![](/images/2014-05-31-floodlight-develop/06.png)
- 
-在主动插入方式中使用Static Flow Pusher
-Static Flow Pusher可以通过编写简单的python代码脚本来控制。例如，在运行floodlight之后配置mininet虚拟机。默认的拓扑结构式一个交换机（s1）和两个连接到交换机的主机（h2，h3）。
-	
-	$sudo mn --controller=remote  --ip=<controller ip> --port=6633
-	
-以下代码是插入从h2发送到h3和h3发送到h2的流表
-
-	import httplib
-	import json
-	 
-	class StaticFlowPusher(object):
-	 
-		def __init__(self, server):
-			self.server = server
-	 
-		def get(self, data):
-			ret = self.rest_call({}, 'GET')
-			return json.loads(ret[2])
-	 
-		def set(self, data):
-			ret = self.rest_call(data, 'POST')
-			return ret[0] == 200
-	 
-		def remove(self, objtype, data):
-			ret = self.rest_call(data, 'DELETE')
-			return ret[0] == 200
-	 
-		def rest_call(self, data, action):
-			path = '/wm/staticflowentrypusher/json'
-			headers = {
-				'Content-type': 'application/json',
-				'Accept': 'application/json',
-				}
-			body = json.dumps(data)
-			conn = httplib.HTTPConnection(self.server, 8080)
-			conn.request(action, path, body, headers)
-			response = conn.getresponse()
-			ret = (response.status, response.reason, response.read())
-			print ret
-			conn.close()
-			return ret
-	 
-	pusher = StaticFlowPusher('<insert_controller_ip')
-	 
-	flow1 = {
-		'switch':"00:00:00:00:00:00:00:01",
-		"name":"flow-mod-1",
-		"cookie":"0",
-		"priority":"32768",
-		"ingress-port":"1",
-		"active":"true",
-		"actions":"output=flood"
-		}
-	 
-	flow2 = {
-		'switch':"00:00:00:00:00:00:00:01",
-		"name":"flow-mod-2",
-		"cookie":"0",
-		"priority":"32768",
-		"ingress-port":"2",
-		"active":"true",
-		"actions":"output=flood"
-		}
-	 
-	pusher.set(flow1)
-	pusher.set(flow2)
-	
-为了测试这个例子，可以再mininet虚拟机上运行pingall
->注意：必须禁用交换机的学习功能和其他路由代码以确保交换机按照静态流表工作）
-
-	Mininet> h2 ping h3
- 
-####Firewall REST API
-#####Firewall REST接口
-防火墙模块提供REST接口服务，该接口实现了采用REST API服务形式的RestletRoutable接口。以下是REST方法的列表：
-URI
-Method
-URI Arguments
-Data
-Data Fields
-Description
-/wm/firewall/module/<op>/json
-GET
-选项：
-status,enable,disable
-存储规则，子网掩码
-None
-None
-查询防火墙状态，启用、停止防火墙
-/wm/firewall/rules/json 
-GET
-None
-None
-None
-以json格式理出所有的规则
- 
-POST
-None
-{"<field 1>":"<value 1>", "<field 2>":"<value 2>", ...}
-"field":"value" 所有的序列组合： 
-"switchid":"<xx:xx:xx:xx:xx:xx:xx:xx>", "src-inport":"<short>",  
-"src-mac": "<xx:xx:xx:xx:xx:xx>", "dst-mac": "<xx:xx:xx:xx:xx:xx>",  
-"dl-type": "<ARP or IPv4>", "src-ip": "<A.B.C.D/M>", "dst-ip": "<A.B.C.D/M>",  
-"nw-proto": "<TCP or UDP or ICMP>", "tp-src": "<short>", "tp-dst": "<short>",  
-"priority": "<int>", "action": "<ALLOW or DENY>"
-
-Note: specifying src-ip/dst-ip without specifying dl-type as ARP, or specifying any IP-based nw-proto will automatically set dl-type to match IPv4. 
-创建新的防火墙规则
- 
-DELETE
-None
-{"<ruleid>":"<int>"}
-"ruleid": "<int>" 
-注意：rule id是成功创建规则是以json形式生成并返回的随机数
-根据rule id删除规则
- 
-Curl使用样例
-假设控制器在本机上运行，显示防火墙运行还是禁用
-curl http://localhost:8080/wm/firewall/module/status/json
- 
-启用防火墙。默认情况下防火墙禁用所有的流量除非创建新的明确允许的规则
-curl http://localhost:8080/wm/firewall/module/enable/json
- 
-添加了允许所有流通过交换机00:00:00:00:00:00:00:01的规则
-curl -X POST -d '{"switchid": "00:00:00:00:00:00:00:01"}' http://localhost:8080/wm/firewall/rules/json
- 
-添加允许所有IP为10.0.0.3的主机到IP为10.0.0.5的主机的流的规则。不指定动作就是允许的规则
-curl -X POST -d '{"src-ip": "10.0.0.3/32", "dst-ip": "10.0.0.7/32"}' http://localhost:8080/wm/firewall/rules/json
-curl -X POST -d '{"src-ip": "10.0.0.7/32", "dst-ip": "10.0.0.3/32"}' http://localhost:8080/wm/firewall/rules/json
- 
-添加允许所有MAC地址为00:00:00:00:00:00:00:0b的主机到MAC地址为00:00:00:00:00:00:00:0c的主机的流的规则
-curl -X POST -d '{"src-mac": "00:00:00:00:00:0a", "dst-mac": "00:00:00:00:00:0a"}' http://localhost:8080/wm/firewall/rules/json
-curl -X POST -d '{"src-mac": "00:00:00:00:00:0b", "dst-mac": "00:00:00:00:00:0b"}' http://localhost:8080/wm/firewall/rules/json
- 
-添加允许IP为10.0.0.3的主机到IP为10.0.0.5的主机ping测试的规则。
-curl -X POST -d '{"src-ip": "10.0.0.3/32", "dst-ip": "10.0.0.7/32", "dl-type":"ARP" }'   http://localhost:8080/wm/firewall/rules/json
-curl -X POST -d '{"src-ip": "10.0.0.7/32", "dst-ip": "10.0.0.3/32", "dl-type":"ARP" }' http://localhost:8080/wm/firewall/rules/json
- 
-curl -X POST -d '{"src-ip": "10.0.0.3/32", "dst-ip": "10.0.0.7/32", "nw-proto":"ICMP" }' http://localhost:8080/wm/firewall/rules/json
-curl -X POST -d '{"dst-ip": "10.0.0.7/32", "dst-ip": "10.0.0.3/32", "nw-proto":"ICMP" }' http://localhost:8080/wm/firewall/rules/json
- 
-添加允许IP为难10.0.0.4到IP为10.0.0.10主机的UDP转发（如iperf）规则，并禁止5010端口。
-curl -X POST -d '{"src-ip": "10.0.0.4/32", "dst-ip": "10.0.0.10/32", "dl-type":"ARP" }' http://localhost:8080/wm/firewall/rules/json
-curl -X POST -d '{"dst-ip": "10.0.0.10/32", "dst-ip": "10.0.0.4/32", "dl-type":"ARP" }' http://localhost:8080/wm/firewall/rules/json
- 
-curl -X POST -d '{"src-ip": "10.0.0.4/32", "dst-ip": "10.0.0.10/32", "nw-proto":"UDP" }' http://localhost:8080/wm/firewall/rules/json
-curl -X POST -d '{"src-ip": "10.0.0.10/32", "dst-ip": "10.0.0.4/32", "nw-proto":"UDP" }' http://localhost:8080/wm/firewall/rules/json
- 
-curl -X POST -d '{"src-ip": "10.0.0.4/32", "dst-ip": "10.0.0.10/32", "nw-proto":"UDP", "tp-src":"5010", "action":"DENY" }' http://localhost:8080/wm/firewall/rules/json
-curl -X POST -d '{"src-ip": "10.0.0.10/32", "dst-ip": "10.0.0.4/32", "nw-proto":"UDP", "tp-src":"5010", "actio
- 
- 
- 
-应用
- 
-REST应用
- 
-Circuit Pusher
-Circuit Pusher采用floodlight REST API在所有交换机上创建基于IP地址与指定的优先级两个设备之间路由的一个双向电路即永久性的流表项。
- 
-注意
-1. Circuit Pusher 现在只能创建两个IP主机之间的，虽然只是简单的扩展以创建基于CIDR格式的IP前缀（例如：192.168.0.0/16）电路，但是支持Static Flow Pusher。
-2. 在向Circuit Pusher发送restAPIRequest之前,控制器必须已经检测到终端设备的存在（即终端设备已经在网络中发送过数据，最简单的办法就是用网络中任意两台主机ping一下），只有这样控制器才知道这些网络终端设备的接入点从而计算他们的路由。
-3.当前支持的命令格式语法为：
-a) circuitpusher.py --controller={IP}:{rest port} --type ip --src {IP} --dst {IP} --add --name {circuit-name}
- 
-在目前IP链路允许的情况之下在目的和源设备之间新建一个链路。ARP自动支持。
-目前，由工作目录中的一个文本文件circuits.json提供一个简单的链路记录存储。
-这个文件没有设置任何保护，并且在控制器重启时也不会重置。这个文件需要正确的操作。
-用户也应该确保当floodlight控制器重启时删除该文件。
- 
-b) circuitpusher.py --controller={IP}:{rest port} --delete --name {circuit-name}
- 
-通过之前创建链路时定义的链接名删除已创建的链路（即3circuits.json文件中的一条记录）
- 
- 
- 
-应用模块
- 
- 
-Firewall
- 
-简介
-Firewall应用已经作为floodlight模块实现，防火墙模块在OpenFlow网络之中强制执行ACL规则（接入控制列表）以确保在网络中的交换机使用的是在packet-in监控行为之下的流。
-ACL规则就是一组交换机入口permit，allow或者deny数据流的条件。
-每个数据流的第一个数据包与交换机已存在的防火墙规则匹配从而决定是否允许通过交换机。
-防火墙规则会按照已分配的优先级排序并且匹配OFMatch（OpenFlow 标准1.0）中定义的Packet-in数据包包头域
-匹配防火墙规则的高优先权决定了对流执行什么操作（允许/拒绝）。
-在OPMatch定义中可以使用通配符。
- 
-防火墙策略
-防火墙工作在被动模式中。
-防火墙规则在创建时按照优先级排序（通过REST API）。
-每个进入交换机的packet-in数据包都会从列表中的最高优先级开始比较，直到匹配成功或者将列表中的全部比较完毕。
-如果匹配成功，规则中的操作（允许/拒绝）将会被存储在IPoutingDecision对象中，然后传递到其他packet-in数据包处理管道之中。
-这一结果将会最终到达Forwarding或者其他被选择的包转发应用（如LearingSwitch
-）中。
-如果结果是允许，Forwarding模块将会发送一个常规的转发流表项；如果结果是拒绝，Forwarding将会丢弃流表项。
-在这两种情况之下，被发送到交换机的流表项都必须完全映射匹配防火墙规则的匹配
-属性（包括通配符）。
-防火墙实现允许规则会产生部分的重叠留空间，这通过判断优先级决定。在下面的简单的例子中，所有送达192.168.1.0/24子网的流除了进入的HTTP（TCP端口80）都被禁止。
-protocol
-destination IP
-destination port
-action
-priority*
-TCP
-192.168.1.0/24
-80
-ALLOW
-1
-TCP
-192.168.1.0/24
-wildcard
-DENY
-2
-*数字越小优先级越高
-需要特别注意的是在有通配符的情况。如果一个流表不与第一个流表（最高优先级）但和第二个流表（较低优先级）匹配成功，这个流表将通过Forwawrding转发到交换机，但这个流表不会通配目的端口；然而，在这个流中的特定端口会被指定到流表项中从而使得通过80端口的数据包将不会被交换机丢弃也不会像控制器发送packet-in数据包。
- 
-REST API
-防火墙模块通过REST接口实现，采用REST API服务形式的RestletRoutable接口。（REST方法见P14-P15防火墙REST方法列表）
- 
-Curl使用样例
-（详情请见P15防火墙curl样例）
- 
-问题和限制
-防火墙模块的DELETE REST API的调用并不会删除交换机上的流表项。规则只会删除控制器中的存储而交换机内的流表项则会按照标准超时行为自动丢弃。这意味着删除规则之后的一定时间之内，被删除的规则仍然有效。
-在最初的提案中，TCP/UDP的所有端口都在防火墙规则支持范围内。然而，由于OpenFlow的流匹配机制不允许指定端口范围，这个功能并没有实现。
- 
- 
-负载均衡
-一个简单的ping，tcp，udp流的负载均衡。这个模块是通过REST API访问的，类似于OpenStatck Quantum LBbaas（Load-baloance-as-a-Service）v1.0版API方案。详情见http://wiki.openstack.org/Quantum/LBaaS。由于该提案尚未完善，所有兼容新并未得到明确的证明。
-代码并不完整但支持基本的为icmp,tcp,udp服务创建和使用负载均衡
+如何工作：
+FloodlightProvider使用Netty库来处理到交换机的线程和连接，每个OpenFlow消息将通过一个Netty的线程进行处理，并执行与所有模块的消息相关联的所有逻辑。其他模块也可以注册类似交换机连接或断开和端口状态通知特定事件。FloodlightProvider将把这些线协议通知转换成基于Java的消息，以便其它模块可以处理。为了使模块注册为基于OpenFlow消息的，他们必须实现IOFMessageListener接口。
  
 局限性：
-客户端不会再使用之后清除静态流表记录，长时间之后会造成交换机流表用尽；
-基于连接的服务器轮叫策略，而不是基于流量；
-状态检测功能尚未实现。
- 
-欢迎从Floodlight社区获得帮助来改善运行情况
- 
-尝试以下基本特征：
-1、下载2012/12/12发布的floodlihgt-master
-确认 net.floodlightcontroller.loadbalancer.LoadBanancer在floodlight.defaultpeoperties中
-启动floodlight
-启动mininet，创建至少8台主机的网络。如：
-$sudo mn --controller=rmote --ip=<controller_ip> --mac --topo=tree,3
-在mininet中执行pingall命令
-在任意linux终端中设置负载均衡vips,pools和members。使用以下脚本：
-#!/bin/sh
-curl -X POST -d '{"id":"1","name":"vip1","protocol":"icmp","address":"10.0.0.100","port":"8"}' http://localhost:8080/quantum/v1.0/vips/
-curl -X POST -d '{"id":"1","name":"pool1","protocol":"icmp","vip_id":"1"}' http://localhost:8080/quantum/v1.0/pools/
-curl -X POST -d '{"id":"1","address":"10.0.0.3","port":"8","pool_id":"1"}' http://localhost:8080/quantum/v1.0/members/
-curl -X POST -d '{"id":"2","address":"10.0.0.4","port":"8","pool_id":"1"}' http://localhost:8080/quantum/v1.0/members/
- 
-curl -X POST -d '{"id":"2","name":"vip2","protocol":"tcp","address":"10.0.0.200","port":"100"}' http://localhost:8080/quantum/v1.0/vips/
-curl -X POST -d '{"id":"2","name":"pool2","protocol":"tcp","vip_id":"2"}' http://localhost:8080/quantum/v1.0/pools/
-curl -X POST -d '{"id":"3","address":"10.0.0.5","port":"100","pool_id":"2"}' http://localhost:8080/quantum/v1.0/members/
-curl -X POST -d '{"id":"4","address":"10.0.0.6","port":"100","pool_id":"2"}' http://localhost:8080/quantum/v1.0/members/
- 
-curl -X POST -d '{"id":"3","name":"vip3","protocol":"udp","address":"10.0.0.150","port":"200"}' http://localhost:8080/quantum/v1.0/vips/
-curl -X POST -d '{"id":"3","name":"pool3","protocol":"udp","vip_id":"3"}' http://localhost:8080/quantum/v1.0/pools/
-curl -X POST -d '{"id":"5","address":"10.0.0.7","port":"200","pool_id":"3"}' http://localhost:8080/quantum/v1.0/members/
-curl -X POST -d '{"id":"6","address":"10.0.0.8","port":"200","pool_id":"3"}' http://localhost:8080/quantum/v1.0/members/
-7、在mininet中，执行’h1 ping -c1 10.0.0.100’,然后执行’h2 ping -c1 10.0.0.100’。这两次的ping都会成功的轮换调用两台不同的真实主机执行。
- 
- 
-OpenStack
- 
-安装Floodlight和OpenStatic
-概述
-以下介绍的是在ubuntu虚拟机上使用BigSwitch开发的decstack脚本安装（last build）和OpenStack（Grizzy）。
- 
-条件
-l Ubuntu12.04.1服务器版即以上
-l 至少2GB RAM（扩展应用需要更多）
-l 至少30GB存储空间
- 
-安装floodlight
-需要运行一个flooflight控制器来支持OpenStack Neutron网络。Floodlight控制器可以运行在一个特定的floodlight虚拟机中（floodlight官网上下载floodlight-vm虚拟机镜像文件）.或者你可以下载floodlight.zip源代码压缩文件解压后进行编译运行。只需要在你的ubuntu虚拟机中进行以下几步简单的操作：
-确保你有正常的网络连接
-$ sudo apt-get update
-$ sudo apt-get install zip default-jdk ant
-$ wget --no-check-certificate https://github.com/floodlight/floodlight/archive/master.zip
-$ unzip master.zip
-$ cd floodlight-master; ant
-$ java -jar target/floodlight.jar -cf src/main/resources/neutron.properties
-你可以通过以下步骤确保你的VirtualNetworkFilter成功激活：
-$ curl 127.0.0.1:8080/networkService/v1.1
-{"status":"ok"}
-通过RestProxy Neutron Plugin使用Devstatck安装OpenStatic
-一旦Floodlight控制器运行之后，我们就准备使用安装脚本安装OpenStack。下面的步骤1在虚拟机上配置OVS监听Floodlight，步骤2在虚拟机上安装OpenStatic和BigSwitch REST procy插件。
-OpenStack Grizzly版
-$ wget https://github.com/openstack-dev/devstack/archive/stable/grizzly.zip
-$ unzip grizzly.zip
-$ cd devstack-stable-grizzly
-OpenStack Folsom版
-$ wget https://github.com/bigswitch/devstack/archive/floodlight/folsom.zip
-$ unzip folsom.zip
-$ cd devstack-floodlight-folsom
- 
-使用编辑器创建一个”localrc”文件并且填在下面。记住，用你选择的密码替换下面的<passward>并更新'BS_FL_CONTROLLERS_PORT=<floodlight IP address>:8080'。如果在同一台虚拟机上启动的floodlight，可以使用127.0.0.1替换控制器的IP地址；否则使用远程控制器所在主机的正确IP地址。
-disable_service n-net
-enable_service q-svc
-enable_service q-dhcp
-enable_service neutron
-enable_service bigswitch_floodlight
-Q_PLUGIN=bigswitch_floodlight
-Q_USE_NAMESPACE=False
-NOVA_USE_NEUTRON_API=v2
-SCHEDULER=nova.scheduler.simple.SimpleScheduler
-MYSQL_PASSWORD=<password>
-RABBIT_PASSWORD=<password>
-ADMIN_PASSWORD=<password>
-SERVICE_PASSWORD=<password>
-SERVICE_TOKEN=tokentoken
-DEST=/opt/stack
-SCREEN_LOGDIR=$DEST/logs/screen
-SYSLOG=True
-#IP:Port for the BSN controller
-#if more than one, separate with commas
-BS_FL_CONTROLLERS_PORT=<ip_address:port>
-BS_FL_CONTROLLER_TIMEOUT=10
-然后：
-$ ./stack.sh
-需要注意的是安装OpenStack时间比较长并且不能中断。任何中断和网络连接失败都会导致错误并无法恢复。建议你在安装之前使用VirtualBox的“快照功能”进行保存。这样就可以很方便的保存后中断安装也不会影响到以后继续安装。
- 
-安装完成
-如果安装成功完成就会显示：
-Horizon is now available at http://10.10.2.15/
-Keystone is serving at http://10.10.2.15:5000/v2.0/
-Examples on using novaclient command line is in exercise.sh
-The default users are: admin and demo
-The password: nova
-This is your host ip: 10.10.2.15
-stack.sh completed in 102 seconds.
- 
- 
- 
-验证OpenStack和Floodlight安装
-下面显示的是一个会话的安装devstack后的快照：
-~/quantum-restproxy$ source openrc demo demo
-~/quantum-restproxy$ quantum net-list
-~/quantum-restproxy$ quantum net-create net1
- 
-创建一个新的网络：
-Field
-Value
-admin_state_up
-True
-id
-9c1cca24-3b7c-456d-afdd-55bc178b1c83
-name
-net1
-shared
-False
-status
-ACTIVE
-subnets
- 
-tenant_id
-4fafea2aac994c13a5f3034a35e583f4
-~/quantum-restproxy$ quantum subnet-create 9c1cca24-3b7c-456d-afdd-55bc178b1c83 10.2.2.0/24
- 
-创建一个新的子网：
-Field
-Value
-allocation_pools
-{"start": "10.2.2.2", "end": "10.2.2.254"}
-cidr
-10.2.2.0/24
-dns_nameservers
- 
-enable_dhcp
-True
-gateway_ip
-10.2.2.1
-host_routes
- 
-id
-7f03b14a-c15e-4d7b-81a0-8e9e6c6bbd88
-ip_version
-4
-name
- 
-network_id
-9c1cca24-3b7c-456d-afdd-55bc178b1c83
-tenant_id
-4fafea2aac994c13a5f3034a35e583f4
-~/devstack$ IMG_ID=`nova image-list | grep cirros | grep -v kernel | grep -v ram | awk -F "|" '{print $2}'`
-~/devstack$ nova boot --image $IMG_ID --flavor 1 --nic net-id=9c1cca24-3b7c-456d-afdd-55bc178b1c83 vm1
- 
-Property
-Value
-OS-DCF:diskConfig
-MANUAL
-OS-EXT-STS:power_state
-0
-OS-EXT-STS:task_state
-scheduling
-OS-EXT-STS:vm_state
-building
-accessIPv4
- 
-accessIPv6
- 
-adminPass
-ZTYnQ7PB3Z7M
-config_drive
- 
-created
-2012-11-01T06:23:32Z
-flavor
-m1.tiny
-hostId
- 
-id
-fe362118-77e3-441d-bb68-608394256259
-image
-cirros-0.3.0-x86_64-uec
-key_name
 None
-metadata
-{}
-name
-vm1
-progress
-0
-security_groups
-[{u'name': u'default'}]
-status
-BUILD
-tenant_id
-4fafea2aac994c13a5f3034a35e583f4
-updated
-2012-11-01T06:23:32Z
-user_id
-69c5935b290543278fb3c4037b44fe8e
-~/devstack$ nova list
  
-ID
-Name
-Status
-Networks
-fe362118-77e3-441d-bb68-608394256259
-vm1
-ACTIVE
-net1=10.2.2.3
-~/quantum-restproxy$ ping 10.2.2.3
-PING 10.2.2.3 (10.2.2.3) 56(84) bytes of data.
-64 bytes from 10.2.2.3: icmp_req=1 ttl=64 time=15.9 ms
-64 bytes from 10.2.2.3: icmp_req=2 ttl=64 time=0.684 ms
-64 bytes from 10.2.2.3: icmp_req=3 ttl=64 time=0.433 ms
-^C
-~/quantum-restproxy$ ssh cirros@10.2.2.3
-The authenticity of host '10.2.2.3 (10.2.2.3)' can't be established.
-RSA key fingerprint is cf:b0:bb:0f:a6:00:0c:87:00:fd:c5:ac:1d:41:03:77.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '10.2.2.3' (RSA) to the list of known hosts.
-cirros@10.2.2.3's password:
-$ ifconfig
-eth0 Link encap:Ethernet HWaddr FA:16:3E:51:2F:27
-inet addr:10.2.2.3 Bcast:10.2.2.255 Mask:255.255.255.0
-inet6 addr: fe80::f816:3eff:fe51:2f27/64 Scope:Link
-UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
-RX packets:353 errors:0 dropped:95 overruns:0 frame:0
-TX packets:236 errors:0 dropped:0 overruns:0 carrier:0
-collisions:0 txqueuelen:1000
-RX bytes:34830 (34.0 KiB) TX bytes:28414 (27.7 KiB)
-Interrupt:11
+配置：
+该模块是默认启用的，要想加载此模块，不需要改变任何配置
  
-另一个例子（基于Essex版本，一些命令格式发生改变）
+配置选项：
+![](/images/2014-05-31-floodlight-develop/14.png)
+
+REST API :
+![](/images/2014-05-31-floodlight-develop/15.png)
  
-创建网络、租户、虚拟机
-下载我们拥有了一个正在工作的OpenStack服务器，我们可以在其上启动多个虚拟机并通过Quantum API关联到不同的虚拟网络
-odd_even_essex.sh创建两个网络每个网络中有两个虚拟机。如果节点创建成功，将会有许多表格被打印，但是确保节点的WAIT PATIENTALY完成了了引导过程。四个虚拟机嵌套在一个虚拟机中，执行都会变得缓慢。
+ 
+DeviceManagerImpl
+描述:
+DeviceManagerImpl追踪网络周围的设备，并为目标设备定义一个新的流。
+ 
+提供的服务：
+IDeviceService
+ 
+服务依赖性：
+IStorageSourceService
+IRestApiService
+ICounterStoreService
+IThreadPoolService
+IFlowReconcileService
+IFloodlightProviderService
+ 
+Java实现位置:
+net.floodlightcontroller.devicemanager.internal.DeviceManagerImpl.
+ 
+如何工作：
+设备管理器通过PacketIn请求了解设备，通过PacketIn消息获取信息，根据实体如何建立进行分类。默认情况下，entity classifies使用了MAC地址和VLAN来识别设备。这两个属性定义一个独一无二的设备，设备管理器将了解其他属性，如IP地址。信息中一个重要的部分是设备的连接点，如果一个交换机接收到一个PacketIn消息，则交换机将会创建一个连接点， A device can have as many as one attachment point per OpenFlow island, where an island is defined as a strongly connected set of OpenFlow switches talking to the same Floodlight controller. 设备管理器也将根据时间清空连接点，IP地址，以及设备本身。最近看到的时间戳是用来保持清空过程的控制。
+ 
+限制：
+设备是不可变的，这意味着你不能持有设备的引用，这些引用必须通过IDeviceService APIs获取。
+ 
+配置：
+该模块是默认启用的，加载模块不需要改变任何配置。
+ 
+配置参数：
+None
+ 
+REST API :
+![](/images/2014-05-31-floodlight-develop/16.png)
+ 
+ 
+通过curl调用简单的REST
+获取所有设备:
+
+	#curl -s http://localhost:8080/wm/device/
+ 
+获取IP地址为1.1.1.1的设备:
+	
+	#curl -s http://localhost:8080/wm/device/?ipv4=1.1.1.1
+ 
+LinkDiscoveryManager (Dev)
+描述：
+链接发现服务负责发现和维护OpenFlow网络中的网络链接的状态。
+ 
+提供的服务：
+ILinkDiscoveryService
+ 
+服务依赖性：
+IStorageSourceService
+IThreadPoolService
+IFloodlightProviderService
+ 
+Java实现位置：
+net.floodlightcontroller.linkdiscovery.internal.LinkDiscoveryManager.
+ 
+如何工作：
+链路发现服务使用LLDPs和广播包检测链路。LLDP的目的MAC为01:80：C2：00:00:0 e和BDDP目的MAC是FF：FF：FF：FF：FF：FF（广播地址），LLDP和BDDP的以太类型为 0x88cc 和 0x8999。为了使拓扑结构被正确的学习，还有两个假设：
+A).任何交换机(包括OpenFlow交换机)将包括一个本地链路包(LLDP)
+B).Honors layer 2 broadcasts
+链路可以是直接的或广播的，如果一个LLDP从一个端口被送出并被另一个端口接受，则建立直接的链路，这意味着端口是直连的。如果一个BDDP从一个端口发出，被另一个端口接受，这意味着还有另外一个二层交换机没有这在两个端口之间的控制器的控制下。
+ 
+限制：
+None
+ 
+配置：
+该模块是默认启用的，加载模块不需要改变任何配置。
+ 
+配置参数：
+None
+ 
+REST API
+![](/images/2014-05-31-floodlight-develop/17.png)
+ 
+ 
+通过curl调用简单的REST
+获得所有设备：
+	
+	#curl -s http://localhost:8080/wm/topology/links/json
+ 
+TopologyService
+描述：
+TopologyService为控制器维护拓扑信息，以及在网路中寻找路由。
+
+在网络中提供的服务：
+ITopologyService
+IRoutingService
+ 
+服务依赖性：
+ILinkDiscoveryService
+IThreadPoolService
+IFloodlightProviderService
+IRestApiService
+ 
+Java位置：
+net.floodlightcontroller.topology.TopologyManager.
+ 
+如何工作：
+拓扑服务基于从lLinkDiscoveryService学习到的链路信息进行计算拓扑，该TopologyService保持的一个重要概念是OpenFlow的“island”的想法。一个island被定义为一组同一floodlight实例下强连接d的OpenFlow交换机。isLand可以使用在同一个2层域中非OpenFlow的交换机进行互连，例如：
+[OF switch 1] -- [OF switch 2] -- [traditional L2 switch] -- [OF switch 3]
+两个island将由拓扑服务来形成，isLand1包含switch1和switch2，而island2只包含switch3。
+当前的拓扑信息将被存储在称为拓扑实例的不可变的数据结构中，在拓扑结构中如果有任何变化,一个新的实例将被创建并且拓扑变化通知消息将被调用。如果其他模块想监听拓扑结构的变化，它们需要实现 ITopologyListener接口。
+ 
+限制：
+尽管你可以在一个OpenFlow isLand中有冗余链路，但不可以有从非OpenFlow交换机到OpenFlow island的冗余链路。
+ 
+配置：
+此模块被默认加载，不需要其它配置。
+ 
+配置参数：
+![](/images/2014-05-31-floodlight-develop/18.png)
+ 
+简单应用：
+获取所有设备：
+
+	Curl -s http://localhost:8080/wm/topology/switchclust
+ 
+RestApiServer
+描述：
+REST API服务器允许模块通过HTTP暴露REST API。
+ 
+提供的服务：
+IRestApiService
+ 
+服务依赖性：
+None
+ 
+Java位置：
+net.floodlightcontroller.restserver.RestApiServer.
+ 
+如何工作：
+REST API服务使用Restlets library。通过REST服务器作为一个依赖的其他模块通过添加一个实现RestletRoutable的类进行公开API。每个RestletRoutable包含附加一个Restlet资源的路由器（最常见的是ServerResource）。用户会附上自己的类扩展Restlet的资源，以处理特定URL的请求。里面的资源注释，如@ GET，@ PUT等，都是选择哪个方法将被用于HTTP请求。序列化通过包含在Restlet库中的Jackson library实现。Jackson可以通过两种方式进行序列化对象，第一，它会自动使用可用的getter对对象进行序列化这些字段，否则，自定义序列化可以创建和注释在类的顶部。
+ 
+限制：
+基本的路径不能重叠，并且是唯一的。
+Restlets只能通过服务接口访问模块的数据。如果一个模块需要通过REST服务器来公开数据，则它必须通过公开接口来得到这个数据。
+ 
+配置：
+此模块被默认加载，不需要其它配置。
+ 
+配置参数：
+![](/images/2014-05-31-floodlight-develop/19.png)
+ 
+ThreadPool
+描述：
+ThreadPool是一个floodlight模块被封装为一个Java的ScheduledExecutorService，它可用于使线程在特定的时间或周期性地运行。
+ 
+提供的服务：
+IThreadPoolService
+ 
+服务依赖性：
+None
+ 
+文件位置：
+net.floodlightcontroller.threadpool.ThreadPool.
+ 
+限制：
+None
+ 
+配置：
+此模块被默认加载，不需要其它配置。
+ 
+配置参数：
+None
+ 
+REST API：
+None
+
+MemoryStorageSource
+描述:
+该MemoryStorageSource是在内存中的NoSQL风格的存储源。也支持更改通知数据库
+ 
+提供服务：
+IStorageSourceService
+ 
+服务依赖性：
+ICounterStoreService
+IRestApiService
+ 
+Java位置：
+net.floodlightcontroller.storage.memory.MemoryStorageSource.
+ 
+如何工作：
+其它依赖于IStorageSourceService 接口的FloodLight模块可以create/delete/modify 内存资源中的数据，所有的数据是共享的，且没有强制执行。模块还可以注册在制定表和制定行的数据中进行修改，其它任何想实现这样功能的模块需要实现IStorageSourceListener 接口。
+ 
+限制：
+一旦数据存储在内存中，当FloodLight关闭时，所有的状态将会丢失。
+没有隔离强制执行的数据，即使一个模块创建了一张表，另一个模块可以覆写那部分数据。
+ 
+配置：
+此模块被默认加载，不需要其它配置。
+ 
+配置参数：
+None
+ 
+REST API：
+None
+ 
+Flow Cache
+flowCache API 由于记住在网络中一系列不同类型的事件的需要而被定义，而事件的处理，以及如何处理往往构建于不同的Floodlight SDN应用程序。例如，处理交换机/链路故障事件流是大多数应用程序最典型的需要。
+Floodlight定义了一个流缓存API和一组框架方法作为通用框架为应用程序开发人员实现适合他们的应用需求的解决方案。
+我们正在努力的编写API，晚些时候会提交到floodlight的官方网站上，与此同时，API调用简洁的说明也可以在flow cache源中找到。
+ 
+交换机/链路故障事件的例子:
+对于流缓存目的的一个更高层次的解释，我们可以通过switch/link中断事件的生命周期来了解各种被调用的模块。
+1.目前，当LinkDiscoveryManager检测到链路或端口出现故障，该事件由在TopologyManager中的一个“NewInstanceWorker”线程处理。请注意，在线程结束时，它调用informListeners，这是一个标记用于告知此事件于其它对处理此事件有兴趣的模块。
+2.所以，你会从实现一个实现了ITologyListener接口和topologyChanged()方法的模块开始，并且通过调用TopologyManager.addListener将此模块添加到侦听器列表中。
+3.在这个模块中你可以通过 Topology.getLastLinkUpdates()方法获取所有的之前发现的拓扑变化，并对事件进行排序去查看你感兴趣的事件。一个交换机出现故障导致相邻交换机链路断开，所以你应该寻找ILinkDiscoery.UpdateOperation.LINK_REMOVED事件（每个受影响的交换机有一个事件），找到的条目将告诉你所涉及的交换机端口。
+4.接下来是要查询每一个受影响的交换机中所有的流表和受影响的端口进行匹配。该查询应该是一个OFStatisticsRequest消息，该消息将通过sw.sendStatsQuery()被送到交换机。
+5.一旦查询被发送出去，稍后你会收到响应，为了能够接收到OF包的响应，你的模块必须实现IOFMessageListener接口以及OFType.STATS_REPLY消息。一旦你接收到响应，你会看到它所有的流表项。现在你可以决定是否想要创建删除流表修改消息来清理流表项。
+ 
+这似乎已经解决了这个问题，但我们还没有用到过流缓存以及与其相关的服务接口呢。
+流缓存的概念是为了使控制器记录所有有效流，并且当事件被一个控制器的其它模块观察或者实时查询交换机时，此流缓存记录会更新。这种方式整合了不同模块更新和检索流记录。
+流高速缓冲存储器的数据结构是留给实现者来决定的，而查询和响应（反流高速缓冲存储器）格式显示在API中。每个查询也可以指定其处理程序。
+Flow reconcile类是为了清理缓存以及交换机中的流表项，你可以由多个模块来处理不同的事件，每个模块将实现IFlowReconcileListene接口和reconcileFlows方法。这种方法既可以立即产生操作，你也可以通过OFMatchReconcile对象将决定传递给另一个模块。也有一些接口被定义为保持挂起的查询。
+ 
+Packet Streamer
+描述：
+Packetstreamer是包流服务，可以选择性的在交换机和控制器之间流式传输OpenFlow包。它包含了两个功能性接口：
+1).基于REST的接口来定义自己感兴趣的OpenFlow消息的特性，被称为过滤器
+2)一个基于Thrift接口的流过滤的数据包
+ 
+REST API
+过滤器定义的一个Post请求："http://<controller>:8080/wm/core/packettrace/json".输入的数据是定义了我们感兴趣的OpenFlow消息特点的参数。FloodLight配备了一个基于Mac地址的过滤器，例如，下面是一个过滤器的格式：
+ 
+	{'mac':<hostMac>, 'direction':<direction>, 'period':<period>, 'sessionId':<sessionid>}
+ 
+![](/images/2014-05-31-floodlight-develop/20.png)
+
+对REST API返回的sessionId，它可以被用来从流过滤服务器接收数据，数据是以Json格式返回的。
+	
+	{'sessionId':<sessionid>}
+	
+下面是创建一个1000秒流会话的Python例子以及一个用来终止会话的函数。
+在开始之前，确定你已经启动了PacketStreamerServer
+
+	url = 'http://%s:8080/wm/core/packettrace/json' % controller
+	filter = {'mac':host, 'direction':'both', 'period':1000}
+	post_data = json.dumps(filter)
+	request = urllib2.Request(url, post_data, {'Content-Type':'application/json'})
+	response_text = None
+	 
+	try:
+		response = urllib2.urlopen(request)
+		response_text = response.read()
+	except Exception, e:
+		# Floodlight may not be running, but we don't want that to be a fatal
+		# error, so we just ignore the exception in that case.
+		print "Exception:", e
+		exit
+	 
+	if not response_text:
+		print "Failed to start a packet trace session"
+		sys.exit()
+	 
+	response_text = json.loads(response_text)
+	 
+	sessionId = None
+	if "sessionId" in response_text:
+		sessionId = response_text["sessionId"]
+	 
+	def terminateTrace(sid):
+		global controller
+	 
+		filter = {SESSIONID:sid, 'period':-1}
+		post_data = json.dumps(filter)
+		url = 'http://%s:8080/wm/core/packettrace/json' % controller
+		request = urllib2.Request(url, post_data, {'Content-Type':'application/json'})
+		try:
+			response = urllib2.urlopen(request)
+			response_text = response.read()
+		except Exception, e:
+			# Floodlight may not be running, but we don't want that to be a fatal
+			# error, so we just ignore the exception in that case.
+			print "Exception:", e
+ 
+基于过滤器的流服务：
+包流服务是由一个基于Thrift流服务器代理。
+该Thrift接口如下表所示，完整的Thrift接口见：src/main/thrift/packetstreamer.thrift
+
+	service PacketStreamer {
+	 
+	   /**
+		* Synchronous method to get packets for a given sessionid
+		*/
+	   list<binary> getPackets(1:string sessionid),
+	 
+	   /**
+		* Synchronous method to publish a packet.
+		* It ensure the order that the packets are pushed
+		*/
+	   i32 pushMessageSync(1:Message packet),
+	 
+	   /**
+		* Asynchronous method to publish a packet.
+		* Order is not guaranteed.
+		*/
+	   oneway void pushMessageAsync(1:Message packet)
+	 
+	   /**
+		* Terminate a session
+		*/
+	   void terminateSession(1:string sessionid)
+	}
+ 
+floodlight创建脚本为Thrift服务创建java和python库，其它语言的支持可以很容易的通过向创建脚本中添加语言选项：setup.sh
+ 
+REST  API描述了流回话的创建。一旦sessionId被创建，过滤接口getPackets(sessionId)，可以被用于给特定的部分接收OF包，terminateSession(sessionId)可以被用于终止实时会话。
+ 
+下面是一个python的例子：
+
+	try:
+		# Make socket
+		transport = TSocket.TSocket('localhost', 9090)
+		# Buffering is critical. Raw sockets are very slow
+		transport = TTransport.TFramedTransport(transport)
+		# Wrap in a protocol
+		protocol = TBinaryProtocol.TBinaryProtocol(transport)
+		# Create a client to use the protocol encoder
+		client = PacketStreamer.Client(protocol)
+		# Connect!
+		transport.open()
+	 
+		while 1:
+			packets = client.getPackets(sessionId)
+			for packet in packets:
+				print "Packet: %s"% packet
+				if "FilterTimeout" in packet:
+					sys.exit()
+	 
+	except Thrift.TException, e:
+		print '%s' % (e.message)
+		terminateTrace(sessionId)
+	 
+客户端例子：
+Floodlight当前的版本带有基于Mac地址的数据包流的例子。客户端的一些代码都列在了前面的章节。
+一个完整的python客户端例子，即描述了REST API和Thrift客户端的使用情况，可以再floodlight的源代码net.floodlightcontroller.packetstreamer中找到。
+请确保在客户端机器中已经安装了thrift并且为packetstreamer的gen-gy和thrift python的目录给于了正确的路径
+ 
+ 
+ 
+###应用模块
+####虚拟网络过滤器（Quantum插件）
+简述：
+虚拟网络过滤器模块是基于虚拟化网络的数据链路层。它允许你在独立的数据链路层上创建多个逻辑链路。这个模块可用于OpenStack的部署或者单例。
+ 
+服务提供：
+· IVirtualNetworkService
+ 
+服务依赖：
+· IDeviceService
+· IFloodlightProviderService
+· IRestApiService
+ 
+Java文件：
+此模块实现在 net.floodlightcontroller.virtualnetwork.VirtualNetworkFilter。
+ 
+如何工作：
+在Floodlight启动时，没有虚拟网络创建，这时主机之间不能相互通信。一旦用户创建虚拟网络，则主机就能够被添加。在PacketIn消息转发实现前，模块将启动。一旦，一条PacketIn消息被接受，模块将查看源MAC 地址和目的MAC 地址。如果2个MAC地址是在同一个虚拟网络，模块将返回Command.CONTINUE消息，并且继续处理流。如果MAC地址不在同一虚拟网络则返回Command.STOP消息，并且丢弃包。
+ 
+限制：
+· 必须在同一个物理数据链路层中。
+· 每个虚拟网络只能拥有一个网关（）（一个网关可被多个虚拟网络共享）。
+· 多播和广播没有被隔离。
+· 允许所有的DHCP路径。
+ 
+配置：
+模块不是默认启用的。它必须被加入配置文件，加入后，为了成功加载，重启Floodlight。这个模块叫做`VirtualNetworkFilter`。包含此模块的默认配置文件位置：`src/main/resources/quantum.properties`
+
+	#The default configuration for openstack
+	floodlight.modules = net.floodlightcontroller.storage.memory.MemoryStorageSource,\
+	net.floodlightcontroller.staticflowentry.StaticFlowEntryPusher,\
+	net.floodlightcontroller.forwarding.Forwarding,\
+	net.floodlightcontroller.jython.JythonDebugInterface,\
+	net.floodlightcontroller.counter.CounterStore,\
+	net.floodlightcontroller.perfmon.PktInProcessingTime,\
+	net.floodlightcontroller.ui.web.StaticWebRoutable,\
+	net.floodlightcontroller.virtualnetwork.VirtualNetworkFilter
+	net.floodlightcontroller.restserver.RestApiServer.port = 8080
+	net.floodlightcontroller.core.FloodlightProvider.openflowport = 6633
+	net.floodlightcontroller.jython.JythonDebugInterface.port = 6655
+ 
+如果你正在使用Floodlight虚拟机，机子中已经有配置文件，简单的执行一下命令来启动它。
+
+	floodlight@localhost:~$ touch /opt/floodlight/floodlight/feature/quantum
+	floodlight@localhost:~$ sudo service floodlight stop
+	floodlight@localhost:~$ sudo service floodlight start
+ 
+REAT API
+![](/images/2014-05-31-floodlight-develop/21.png)
+ 
+实例：
+创建一个名为“VirtualNetwork1”的虚拟网，ID设为“NetworkId1”，网关为“10.0.0.7”，租户是默认的（当前是忽略的）。
+	
+	curl -X PUT -d '{ "network": { "gateway": "10.0.0.7", "name": "virtualNetwork1" } }' http://localhost:8080/networkService/v1.1/tenants/default/networks/NetworkId1
+	
+向虚拟网络中添加一个MAC地址为“00:00:00:00:00:08”，端口为“port1”的主机。
+	
+	curl -X PUT -d '{"attachment": {"id": "NetworkId1", "mac": "00:00:00:00:00:08"}}' http://localhost:8080/networkService/v1.1/tenants/default/networks/NetworkId1/ports/port1/attachment
+
+####转发
+简介：
+转发将在2个设备之见转发包。源设备和目的设备通过IDeviceService区分。
+ 
+服务提供：
+· 没有
+ 
+服务依赖：
+· IDeviceService
+· IFloodlightProviderService
+· IRestApiService
+· IRoutingService
+· ITopologyService
+· ICounterStoreService
+ 
+Java文件：
+此模块实现在 net.floodlightcontroller.forwarding.Forwarding。
+ 
+如何工作：
+交换机需要考虑到，控制器可能需要工作在一个包含Openflow交换机和非Openflow交换机的网络中。模块将发现所有的 OF 岛。FlowMod 将被安装到最短路径上。如果一条 PacketIn被接收到一个OF岛，而该岛没有挂载点，则这个网包将被洪泛。 
+ 
+限制：
+不提供路由功能。
+没有VLAN的加减包头。
+ 
+配置：
+该模块默认启动，在加载模块时，配置无需更改。
+ 
+防火墙
+简介：
+防火墙已被作为一个模块实现，它通过ACL规则实现流量过滤。每个被首包触发的 PacketIn 消息将跟规则集进行匹配，按照最高权值匹配规则行为进
+行处理。防火墙匹配的最高优先级决定流的操作。通配符在OFMatc中用作定义。
+ 
+防火墙策略：
+防火墙被动运行。防火墙规则在他们被创建时（通过REST API）通过优先级排序。每个packet_in将从列表中的最高级开始匹配，直到列表结束。如果找到匹配，操作指令（允许或拒绝）储存到一个IRoutingDecision 对象中，并发送其余的pack_in处理管道。指令最后将到达转发模块或者其他数据包转发的模块(例如 LearningSwitch)。如果，指令允许操作，转发模块将推送一个常规的转发流表，否则，推送一个丢弃流表。不管哪种，被推送给交换机的流表都必须准确的反应出防火墙规则的匹配属性(包括通配符).
+因此实现的防火墙,根据不同的优先级,允许拥有部分重叠的流空间。下面是个简单的例子，192.168.1.0/24 段内的子网的流量都是被拒绝的，除了入站HTTP(TCP端口80)流量.
+![](/images/2014-05-31-floodlight-develop/22.png)
+ 
+优先级数字越低，优先级别越高。
+这里要特别处理通配符。如果流没有匹配最高级，而匹配了次高级，那么由转发模块发送给交换的流表将不会通配目的端口，
+而是在流表中指定端口，所以80端口的包将不会被丢弃。
+ 
+REST 接口
+防火墙模块实现了REST接口，该接口实现了采用REST API服务的 RestletRoutable的接口。下面是REST方法的列表。
+![](/images/2014-05-31-floodlight-develop/8.png)
+ 
+实例：
+假定控制器运行在本机。显示出防火墙是否被启动。
+
+	curl http://localhost:8080/wm/firewall/module/status/json
+ 
+启动防火墙。默认的，防火墙拒绝所有流，除非一个显式的ALLOW rule被创建。
+
+	curl http://localhost:8080/wm/firewall/module/enable/json
+ 
+添加一个ALLOW rules为所有的流，来能够通过交换机 00:00:00:00:00:00:00:01。
+
+	curl -X POST -d '{"switchid": "00:00:00:00:00:00:00:01"}' http://localhost:8080/wm/firewall/rules/json
+ 
+为ip为10.0.0.3和10.0.0.7的主机的所有的流添加一个ALLOW rules。Action 意味着ALLOW rules
+
+	curl -X POST -d '{"src-ip": "10.0.0.3/32", "dst-ip": "10.0.0.7/32"}' http://localhost:8080/wm/firewall/rules/json
+	curl -X POST -d '{"src-ip": "10.0.0.7/32", "dst-ip": "10.0.0.3/32"}' http://localhost:8080/wm/firewall/rules/json 
+ 
+为mac地址为00:00:00:00:00:0a和00:00:00:00:00:0b的主机的所有流添加一个ALLOW rules。
+
+	curl -X POST -d '{"src-mac": "00:00:00:00:00:0a", "dst-mac": "00:00:00:00:00:0b"}' http://localhost:8080/wm/firewall/rules/json
+	curl -X POST -d '{"dst-mac": "00:00:00:00:00:0b", "dst-mac": "00:00:00:00:00:0a"}' http://localhost:8080/wm/firewall/rules/json
+ 
+添加一个ALLOW rules使ip为10.0.0.3和10.0.0.7的主机能够ping通
+
+	curl -X POST -d '{"src-ip": "10.0.0.3/32", "dst-ip": "10.0.0.7/32", "dl-type":"ARP" }' http://localhost:8080/wm/firewall/rules/json
+	curl -X POST -d '{"src-ip": "10.0.0.7/32", "dst-ip": "10.0.0.3/32", "dl-type":"ARP" }' http://localhost:8080/wm/firewall/rules/json
+ 
+	curl -X POST -d '{"src-ip": "10.0.0.3/32", "dst-ip": "10.0.0.7/32", "nw-proto":"ICMP" }' http://localhost:8080/wm/firewall/rules/json
+	curl -X POST -d '{"src-ip": "10.0.0.7/32", "dst-ip": "10.0.0.3/32", "nw-proto":"ICMP" }' http://localhost:8080/wm/firewall/rules/json
+ 
+添加一个ALLOW rules,ip为10.0.0.4和10.0.0.10主机之间能够UDP通信，同时阻塞5010、端口
+	
+	curl -X POST -d '{"src-ip": "10.0.0.4/32", "dst-ip": "10.0.0.10/32", "dl-type":"ARP" }' http://localhost:8080/wm/firewall/rules/json
+	curl -X POST -d '{"src-ip": "10.0.0.10/32", "dst-ip": "10.0.0.4/32", "dl-type":"ARP" }' http://localhost:8080/wm/firewall/rules/json
+ 
+	curl -X POST -d '{"src-ip": "10.0.0.4/32", "dst-ip": "10.0.0.10/32", "nw-proto":"UDP" }' http://localhost:8080/wm/firewall/rules/json
+	curl -X POST -d '{"src-ip": "10.0.0.10/32", "dst-ip": "10.0.0.4/32", "nw-proto":"UDP" }' http://localhost:8080/wm/firewall/rules/json
+ 
+	curl -X POST -d '{"src-ip": "10.0.0.4/32", "dst-ip": "10.0.0.10/32", "nw-proto":"UDP", "tp-src":"5010", "action":"DENY" }' http://localhost:8080/wm/firewall/rules/json
+	curl -X POST -d '{"src-ip": "10.0.0.10/32", "dst-ip": "10.0.0.4/32", "nw-proto":"UDP", "tp-dst":"5010", "action":"DENY" }' http://localhost:8080/wm/firewall/rules/json
+ 
+测试方法：
+测试包括自动化单元，自动化单元通过EasyMock创建。”Firewalltest”类包括可由JUnit和Eclipse执行的测试案例。在大多数的测试案例中，packer_in事件是模拟的，由此产生的防火墙行为能够被验证，它们是基于被定义的规则集的。以下是各种测试案例。
+
+* testNoRules
+ 
+Description: 没有任何的rules，发送一个packet_in事件，.防火墙将会拒绝所有流。这是一个边界测试案例
+
+* testRuleInsertionIntoStorage
+ 
+ Description: 添加一个rules，通过检查存储来验证. 这是一个简单positive 测试案例.
+* testRuleDeletion
+ 
+ Description: 删除一个rules，通过检查存储来验证. Again, 这是一个简单positive 测试案例.
+
+* testFirewallDisabled
+
+ Description: 在防火墙没有启动时，插入一个rules，并发送一个packet_in事件. 防火墙将会拒绝所有的流.这是一个简单的 negative 的测试案例.
+
+* testSimpleAllowRule
+
+ Description:添加一个简单的rules，使两个2不同的ip之间能够tcp通信，并且发送一个packet_in事件。在验证防火墙行为之后，能够发送另一个应该被丢弃的包 。This test case covers normal rules (non-boundary case – i.e. no malformed packets or broadcasts)这个测试案例包含一个简单的rules（无边界案例——例如 一个完好的包或者广播）
+
+* testOverlappingRules
+
+ Description:添加overlapping rules (拒绝所有的TCP流 除非目的端口是80). 这个测试案例包含复杂情况下的多个规则(multiple allow-deny overlapping rules).
+
+* testARP
+
+ Description:测试一个ARP广播请求包和单播ARP回应。没有允许ARP回应的防火墙rules，所以只有广播请求包能够通过.
+
+* testIPBroadcast
+
+ Description: 够在防火墙没有任何rules情况下，发送一个ip广播（L3）packt_in事件。这是一个包含IP广播的positive测试案例（L3+L2广播）.
+
+* testMalformedIPBroadcast
+
+ Description:在没有任何rules情况下,发送一个坏的IP广播packet_in事件. 防火墙将会拒绝这个流, 因为这个包一个L2广播L3单播. 这是一个边界案例.
+
+* testLayer2Rule
+
+ Description:一个规则允许指定的MAC通信，另一个规则拒绝所有的TCP通信. 防火墙将接受这个流. 这是一个negative测试案例，这里规则包含L2. 
+ 
+问题和局限:
+1.防火墙 模块DELETE REST API功能的调用没有删除交换机上的流表。Rules将会被从控制器存储中删除，当交换机上的流表处理时间超过标准。这意味着在一段时间后，删除规则是有效的。流可以持续存在,只要它在交换机中持续通信.
+2.最初的，TCP/UDP端口范围是通过防火墙rules来支持的。但是，作为OpenFlow流匹配机制不允许指定端口范围,此功能没有实现。
+
+####Port Down Reconciliation 
+简介:
+PortDownReconciliation模块的实现是为了在端口关闭的时候处理网络中的流。在PORT_DOWN链路发现更新消息之后，这个模块将会找出并且删除直接指向这个端口的流。所有无效的流都被删除之后，floodlight应该重新评估链路，流量也要采用新的拓扑。如果没有这个模块，流量会持续的进入到这个坏掉的端口，因为流的过期时间还没有到。
+工作原理:
+想象一下我们有一个拓扑，包含了交换机s1，s1连接了一个主机h1,和两个交换机s2、s3，现在流量从s2、s3进入到s1，目标地址是h1，但是到h1的链路关闭了，s1将会给controller发送一个PORT_DOWN通知。
+在收到PORT_DOWN链路更新之后，该模块就会找到那个关闭的端口，然后向s1查询所有目的端口是链路发现更新描述的端口的流，它会分析这些流，并且为进入端口和把流路由到已关闭端口的OFMatch创建索引。
+索引可能看起来像这样:
+![](/images/2014-05-31-floodlight-develop/23.png)
+跟随s1的索引，该模块向拓扑服务询问网络中所有交换机的连接，以此追溯链路。找出所有的交换机，这些交换机包含了目标交换机对应s1，目标端口对应索引中描述的无效进入端口，如果找到这样的匹配，那么这个交换机就会被添加到相邻交换机索引中，此时指向源端口的连接和无效的OFMatch。
+相邻交换机索引:
+![](/images/2014-05-31-floodlight-develop/24.png)
+ 
+ 现在s1就不需要这些信息了，所有目标端口是故障端口的流都将会从s1中删除，然后该模块遍历和s1相邻交换机的索引，并在上边执行相同的操作，这个过程会逐跳的递归进行，直到网络中没有无效的流。
+问题和局限:
+1.如果在一个源地址和目的地址的路由中有重叠的交换机，那些重叠的交换机将会因不同的流被统计多次，这就花费了额外的时间，但是对于维护网络中流的完整性，这也是必要的。
+2.这个模块依赖于转发模块实现。
+###模块加载系统
+简介:
+Floodlight使用自己的模块系统来决定哪些模块会运行，这个系统的设计目标是：
+1.通过修改配置文件决定哪些模块会被加载
+2.实现一个模块不需要修改他所依赖的模块
+3.创建一个定义良好的平台和API以扩展Floodlight
+4.对代码进行强制的模块化
+主要部件：
+模块系统包含几个主要的部件：模块加载器、模块、服务、配置文件和一个在jar文件中包含了了可用模块列表的文件。
+模块：
+模块被定以为一个实现了IFloodlightModule接口的类。IFloodlightModule接口的定义如批注所示。
+
+	/**
+	 * Defines an interface for loadable Floodlight modules.
+	 *
+	 * At a high level, these functions are called in the following order:
+	 * <ol>
+	 * <li> getServices() : what services does this module provide
+	 * <li> getDependencies() : list the dependencies
+	 * <li> init() : internal initializations (don't touch other modules)
+	 * <li> startUp() : external initializations (<em>do</em> touch other modules)
+	 * </ol>
+	 *
+	 * @author alexreimers
+	 */
+	public interface IFloodlightModule {
+	 
+		/**
+		 * Return the list of interfaces that this module implements.
+		 * All interfaces must inherit IFloodlightService
+		 * @return
+		 */
+	 
+		public Collection<Class<? extends IFloodlightService>> getModuleServices();
+	 
+		/**
+		 * Instantiate (as needed) and return objects that implement each
+		 * of the services exported by this module.  The map returned maps
+		 * the implemented service to the object.  The object could be the
+		 * same object or different objects for different exported services.
+		 * @return The map from service interface class to service implementation
+		 */
+		public Map<Class<? extends IFloodlightService>,
+				   IFloodlightService> getServiceImpls();
+	 
+		/**
+		 * Get a list of Modules that this module depends on.  The module system
+		 * will ensure that each these dependencies is resolved before the
+		 * subsequent calls to init().
+		 * @return The Collection of IFloodlightServices that this module depnds
+		 *         on.
+		 */
+	 
+		public Collection<Class<? extends IFloodlightService>> getModuleDependencies();
+	 
+		/**
+		 * This is a hook for each module to do its <em>internal</em> initialization,
+		 * e.g., call setService(context.getService("Service"))
+		 *
+		 * All module dependencies are resolved when this is called, but not every module
+		 * is initialized.
+		 *
+		 * @param context
+		 * @throws FloodlightModuleException
+		 */
+	 
+		void init(FloodlightModuleContext context) throws FloodlightModuleException;
+	 
+		/**
+		 * This is a hook for each module to do its <em>external</em> initializations,
+		 * e.g., register for callbacks or query for state in other modules
+		 *
+		 * It is expected that this function will not block and that modules that want
+		 * non-event driven CPU will spawn their own threads.
+		 *
+		 * @param context
+		 */
+	 
+		void startUp(FloodlightModuleContext context);
+	}
+	 
+服务:
+一个模块可能包含一个或多个服务，服务被定义为一个继承IFloodlightService接口的接口。
+
+	/**
+	 * This is the base interface for any IFloodlightModule package that provides
+	 * a service.
+	 * @author alexreimers
+	 *
+	 */
+	public abstract interface IFloodlightService {
+		// This space is intentionally left blank....don't touch it
+	}
+ 
+现在这是一个空接口，在我们的加载系统中它是用来强制保证类型安全的。
+ 
+配置文件:
+配置文件明确的规定了哪些模块可以加载，它的格式是标准的java属性，使用键值对，在模块列表中键是`floodlight.modules`，值是以逗号分隔的模块列表，可以在一行，或者使用 \ 断行，下边是Floodlight默认的配置文件：
+	
+	floodlight.modules = net.floodlightcontroller.staticflowentry.StaticFlowEntryPusher,\
+	net.floodlightcontroller.forwarding.Forwarding,\
+	net.floodlightcontroller.jython.JythonDebugInterface
+ 
+有许多没有写在这个列表里的模块也被加载了，这是因为模块系统自动加载了依赖，如果一个模块没有提供任何服务，那么就必须在这里明确的定义。
+ 
+模块文件:
+我们使用java的ServiceLoader找到类路径中的模块，这就要求我们列出文件中所有的类，这个文件的格式是在每一行都有一个完整的类名，这个文件在src/main/resource/MEAT-INFO/service/net.floodlightcontroller.module.IFloodModule。你使用的每个jar文件（如果使用多个jar文件就接着看 ）都要有它自己的META-INFO/services/net.floodlightcontroller.module.IFloodlightModule文件，列出实现了IFloodlightModule接口的类。下边是一个示例文件：
+	
+	net.floodlightcontroller.core.CoreModule
+	net.floodlightcontroller.storage.memory.MemoryStorageSource
+	net.floodlightcontroller.devicemanager.internal.DeviceManagerImpl
+	net.floodlightcontroller.topology.internal.TopologyImpl
+	net.floodlightcontroller.routing.dijkstra.RoutingImpl
+	net.floodlightcontroller.forwarding.Forwarding
+	net.floodlightcontroller.core.OFMessageFilterManager
+	net.floodlightcontroller.staticflowentry.StaticFlowEntryPusher
+	net.floodlightcontroller.perfmon.PktInProcessingTime
+	net.floodlightcontroller.restserver.RestApiServer
+	net.floodlightcontroller.learningswitch.LearningSwitch
+	net.floodlightcontroller.hub.Hub
+	net.floodlightcontroller.jython.JythonDebugInterface
+ 
+启动序列：
+1.模块发现
+所有在类路径中的模块（实现IFloodlightModule的类）都会被找到，并且建立三个映射（map）
+服务映射：建立服务和提供该服务的模块之间的映射
+模块服务映射：建立模块和他提供的所有服务之间的映射
+模块名称映射：建立模块类和模块类名之间的映射
+2.找出需要加载的最小集合
+使用深度优先遍历算法找出需要加载模块的最小集合，所有在配置文件中定义的模块都会添加到队列中，每个模块出对后都会被添加到模块启动列表中，如果一个模块的依赖还没有添加到模块启动列表中，将会在该模块上调用getModuleDependenceies方法。在这里有两种情况可能引起FloodlightModuleException异常，第一种情况找不到在配置文件中定义的模块或者模块的依赖，第二种情况是两个模块提供了相同的服务，却没有指明使用哪个。
+3.初始化模块
+集合中的模块会迭代的加载，并且在上边调用init方法，现在模块会做两件事情
+1.在FloodlightModuleContext上调用getServiceImpl方法把它的依赖写到一起。
+2.对自己内部的数据结构执行初始化。
+init方法调用的顺序是不确定的。
+4.启动模块：
+在每个模块上调用init方法后，就会调用startUp方法，在这个方法中模块将会调用它所依赖的模块，例如：使用IStorageSourceService模块在数据库中建立一个表、或者用IFloodlightProviderService的executor服务建立一个线程。
+通过命令行使用控制器:
+只使用floodlight.jar：如果你只是想使用默认配置运行floodlight，最简单的方法就是运行这个命令
+    
+	$java -jar floodlight.jar
+	
+使用多个jar文件：也可以使用多个jar文件运行openflow，如果你想用另外的包分发，这将会非常有用 ，只是命令有些不同。
+
+	$java -cp floodlight.jar:/path/to/other.jar net.floodlightcontroller.core.Main
+	
+-cp参数告诉java使用类路径中的那些jar文件，main方法坐在的类由net.floodlightconntroller.core.Main指定。如果你添加的jar文件包含了实现IFloodlightModule接口的类，你就要确保创建了MAIN-INF/services/net.floodlightcontroller.core.module.IFloodlightModule。
+ 
+指定其它的配置文件：
+使用这两种方法 你可以指定一个其它的配置文件，这需要用到-cf选项。
+	
+	$java -cp floodlight.jar:/path/to/other.jar net.floodlightcontroller.core.Main -cf path/to/config/file.properties
+
+	-cf参数必须放到所有选项的后边，这就让参数传递到了java程序而不是java虚拟机。使用哪个配置文件的顺序是：
+使用-cf选项指定的配置文件`config/floodlight.properties`文件（如果存在的话）
+在jar文件中的`floodlightdefault.properties`文件 >（在src/main/resources中）。
+ 
+ 
+每个模块的配置选项:
+ Properties文件能够指定每个模块的配置选项。格式是<规范的模块名>.<配置选项名>=<内容>。
+我们使用规范的模块名，这样任何的模块都可以创建配置选项来实现自身.
+例如,如果我们想指定REST API 端口,就向 property文件中加入。
+
+	net.floodlightcontroller.restserver.RestApiServer.port = 8080
+	
+我们来分析一下RestApiServer的init方法.
+	
+	// read our config options
+	Map<String, String> configOptions = context.getConfigParams(this);
+	String port = configOptions.get("port");
+	if (port != null) {
+			restPort = Integer.parseInt(port);
+	}
+	
+>注意null检查是必须的.如果配置选项没有提供，. FloodlightModuleLoader 模块将不会将其添加到文本中。
+
+通过命令行,选项可以指定为Java属性. 这些可以重写Floodlight配置文件中任何指定的东西.
+java -Dnet.floodlightcontroller.restserver.RestApiServer.port=8080 -jar floodlight.jar
+ 
+有两点要注意,第一 ,Java属性在运行floodlight.jar之前First应被指定.之后,所有的被作为可执行的命令行文本传递给Java. The second is that there are no spaces with the -D option.
+注意事项
+
+* 为了处理循环依赖关系,init()方法和startup()方法的调用顺序是不确定的,因此,你不能假设任何的init()和startUp方法的调用。.
+* 你的配置文件不能调用FLoodlight，properties文件，这是jar包中的默认配置文件。.
+* 每个模块必须有一个0参数(最好是空的)构造函数.做什么应该在构造函数中实现,而不是调用init()。.
+* 模块之间可能没有服务重叠,但是存在功能重叠,例如, LearningSwitch 模块Forwarding都有转发包的方法 Since they do not provide a common service w do not detect and overlap.
+ 
+####Javadoc entry
+综述:
+Overview 页面提供了所有的包的摘要,也包含了包集合的说明
+包
+每个包都有一个列出它的接口和类的页面,并都对每个类和接口有个简介.这个页面可能包含的:
+
+* Interfaces (italic)
+* Classes
+* Enums
+* Exceptions
+* Errors
+* Annotation Types
+
+Class/Interface类和接口
+每个类,接口以及嵌套类和嵌套接口有自己的单独的页面.这些页面有三个部分,包括a class/interface description, summary tables, and detailed member descriptions:
+
+* Class inheritance diagram
+* Direct Subclasses
+* All Known Subinterfaces
+* All Known Implementing Classes
+* Class/interface declaration
+* Class/interface description 
+* Nested Class Summary
+* Field Summary
+* Constructor Summary
+* Method Summary 
+* Field Detail
+* Constructor Detail
+* Method Detail
+
+每个摘要通过第一段来详细描述的内容.摘要条目按照字母顺序排列,而详细描述以出现在源代码的顺序. 这个保存由程序员建立的逻辑组.
+Annotation Type注释种类
+每种注释有自己的页面,并有一下几个部分:
+
+* Annotation Type declaration
+* Annotation Type description
+* Required Element Summary
+* Optional Element Summary
+* Element Detail
+
+Enum枚举
+每个枚举有自己单独的页面,并有以下部分
+
+* Enum declaration
+* Enum description
+* Enum Constant Summary
+* Enum Constant Detail
+
+Use
+每个文件包,类和接口有自己的Use页面。这个页面描述，包，类，构造器和字段用的了哪些包和类。
+Tree (Class Hierarchy)树（类的层次结构）
+这儿有所有包的层次结构,也有每个包的层次结构.每个页面就是类和接口的列表.注意接口不是从 java.lang.Object继承的
+当查看概览页面,点击“树”显示所有包的层次结构.
+当浏览一个特定的包,类或接口页面,点击“树”显示,包的层次结构.
+不赞成使用的API
+Deprecated API 页面列出了所有不赞同使用的API,之所以,不赞同使用,是为了优化,或者一个代替的API已经给出。
+Index索引
+索引是一个字母列表，其中包含了所有类、接口、构造函数、方法和字段。
+Prev/Next上/下页
+These links take you to the next or previous class, interface, package, or related page.这些链接指向下一页，其中包括相关的类,接口,包,或相关页面。
+Frames/No Frames
+These links show and hide the HTML frames. All pages are available with or without frames.
+序列化格式
+每个序列化类或者外部类都有一个描述它的字段和方法。这是 re-implementors兴趣的，而不是使用API的开发者。虽然没有链接在导航栏中,你可以得到这个信息,通过定位任何序列化的类并单击“Serialized Form”。
+固定字段值
+固定字段值页面列出了静态的final字段和他们的值
+This help file applies to API documentation generated using the standard doclet
