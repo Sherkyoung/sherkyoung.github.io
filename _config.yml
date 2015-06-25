@@ -1,0 +1,12 @@
+auto: true
+
+markdown: rdiscount
+pygments: true
+paginate: 10
+paginate_path: "page:num"
+permalink: pretty
+
+title: Phoenix
+url: http://sherkyoung.github.io
+feed: /atom.xml
+author_info: <a href="http://sherkyoung.github.io/">SherkYoung</a>
