@@ -2,22 +2,34 @@
 layout: default
 title: 读书
 permalink: /pages/read.html
-
-books: 
-    - title: Hadoop实战（第二版）
-      status: 已读
-      author: 陆嘉恒 
-      publisher: 机械工业出版社
-      language: 中文
-      link: http://book.douban.com/subject/20275953/
-      cover: http://img3.douban.com/lpic/s24321021.jpg
-      description: 内容全面，对Hadoop整个技术体系进行了全面的讲解，不仅包括HDFS、MapReduce等核心内容，而且还包括Hive、HBase、ZooKeeper等与Hadoop技术相关的重要内容。
-    - title: 编程之美
-      status: 在读
-      author: 编程之美小组
-      publisher: 电子工业出版社
-      language: 中文
-      link: http://book.douban.com/subject/3004255/
-      cover: http://img4.douban.com/lpic/s9233126.jpg
-      description:  一些近些年来常见的算法问题，对面试等很有帮助
 ---
+
+<div class="home">
+	<div class="bookpiclist">
+		{% for page in site.posts %}
+				{% if page.categories[0] == '读书' %}
+					{% for book in page.books %}
+					<div class="bookpic">
+						<div class="bookpic-wrapper">	
+							<a class="pjaxlink" href="{{page.url}}#{{ book.title }}"><img src="{{ book.cover }}" alt="cover">
+								<div class="booklabel">
+															<div class="label-text center">
+																{% if book.status == '已读' %}
+										<span class="label label-success">{{ book.status }}</span>
+										{% elsif book.status == '在读' %}
+										<span class="label label-info">{{ book.status }}</span>
+										{% elsif book.status == '未读' %}
+										<span class="label label-default">{{ book.status }}</span>
+										{% endif %}
+															  </div>
+														<div class="label-bg"></div>
+												 </div>						
+							</a>
+						</div>
+					</div>
+					{% endfor %}
+				{% endif %}
+		{% endfor %}
+	</div>
+	<div class="clear"></div>
+</div>
