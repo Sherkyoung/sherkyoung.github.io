@@ -4,7 +4,7 @@ title: 生活
 permalink: /pages/life.html
 ---
 <div class="home">
-
+{% for type in site.type %} 
 	{% for category in site.categories %} 
 	      		<div class="panel panel-primary">
 	        			<div class="panel-heading center" id="{{ category[0] }}" name="{{ category[0] }}">{{ category[0] }}</div>
@@ -16,5 +16,5 @@ permalink: /pages/life.html
 			               {% endfor %}
 			</div>
 	{% endfor %}
-	
+{% endfor %}	
 </div>
