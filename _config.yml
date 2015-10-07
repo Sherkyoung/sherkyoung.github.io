@@ -1,27 +1,37 @@
+encoding: UTF-8
 
+permalink: /:year/:month/:day/:title.html
+paginate: 5
+markdown: kramdown
+
+kramdown:
+  input: GFM
+
+highlighter: pygments
+pygments: true
 
 # 作者信息
 author: 
-  name: 杨帅
-  email: sherkyoung@gmail.com
-  link: http://sherkyoung.github.io/
-  weibo: http://weibo.com/yangshuailogo
-  github: https://github.com/sherkyoung
-  github_username:  SherkYoung
-  weibo_username:  SherkYoung
+  name: 高扬
+  email: gycoderhh@gmail.com
+  link: http://blademastercoder.github.io/
+  weibo: http://weibo.com/u/2344559062
+  github: https://github.com/BladeMasterCoder
+  github_username:  BladeMasterCoder
+  weibo_username:  BladeMasterCoder
 
 # 站点信息
-title : Phoenix
+title : 恒星的恒心
 description: 
   一不小心迈入计算机行业，在程序猿的道路上艰难地前行，目标是成
   为一名优秀的全栈工程师或者说资深码农。对很多东西都充满兴趣，
   跑步游泳，近期目标是能跑半程马拉松，学会自由泳。
-url: http://sherkyoung.github.io/
+url: http://blademastercoder.github.io/
 rss_url: /feed.xml
 
 # gavatar头像及Favicon
-gavatar : favicon.ico
-favicon : favicon.ico
+gavatar : /assets/img/gavatar.png
+favicon : /assets/img/favicon.png
 
 # disqus 设置
 #disqus:

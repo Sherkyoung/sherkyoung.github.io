@@ -1,45 +1,43 @@
 ---
 layout: default
 ---
+<div class="post">
 
-<link rel="stylesheet" href="/js/prettify/prettify.css" />
-<style type="text/css">
-    body { background:#e8e8e8; }
-    @media screen and (max-width: 750px){
-        body { background:#fff; }
-    }
-    @media screen and (max-width: 1020px){
-        body { background:#fff; }
-    }
-</style>
-
-<div id="content">
-    <div class="entry">
-        <h1 class="entry-title"><a href="{{ page.url }}" title="{{ page.title }}">{{ page.title }}</a></h1>
-        <p class="entry-date">{{ page.date|date:"%Y-%m-%d" }}</p>
-        {{ content }}
-
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'sherkyoung'; // required: replace example with your forum shortname
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function() {
-                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+    <div class="info">
+	    <p class="post-meta"><i class="fa fa-calendar"></i>&nbsp;{{ page.date | date:"%Y-%m-%d" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %}</p>
+	    {% if page.tags.size > 0 %}
+		<i class="fa fa-tags"></i>
+		<span class="index-post-tag">
+		{% for tag in page.tags %}
+			<a class="pjaxlink" href="/pages/tags.html#{{tag}}">{{ tag}}</a>
+		{% endfor %}
+		</span>
+	    {% endif %}
     </div>
+  </header>
 
-    <div class="sidenav">
-        <iframe width="100%" height="100" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=100&fansRow=2&ptype=1&speed=0&skin=5&isTitle=1&noborder=0&isWeibo=0&isFans=0&uid=2669568260&verifier=9d6fa483&dpc=1"></iframe>
-    </div>
-	
-
+  <article class="post-content">
+    {{ content }}
+  </article>
 </div>
 
-<script src="/js/post.js" type="text/javascript"></script>
+  <div class="prevandnext">
+    	  {% if page.next %}
+	    <div style="margin:0.5em;">
+	    <span>上一篇 ：</span><a class="pjaxlink" href="{{ site.url }}{{ page.next.url }}"  title="{{ page.next.title }}">{{ page.next.title }}</a>
+	    </div>
+	  {% endif %}
+  	  {% if page.previous %}
+	    <div style="margin:0.5em;">
+	    <span>下一篇 ：</span><a class="pjaxlink" href="{{ site.url }}{{ page.previous.url }}"  title="{{ page.previous.title }}">{{ page.previous.title }}</a>
+	    </div>
+	  {% endif %}
+	  	<div style="margin:0.5em;">
+			<span> 版权所有，转载时必须以链接形式注明原始出处</span>
+	    </div>
+	 
+  </div>
+  
+  {% include duoshuo.html %}
