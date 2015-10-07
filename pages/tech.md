@@ -5,7 +5,7 @@ permalink: /pages/tech.html
 ---
 <div class="home">
 
-	{% for category in site.categories %} 
+	{% for category in site.categories.tech %} 
 	      		<div class="panel panel-primary">
 	        			<div class="panel-heading center" id="{{ category[0] }}" name="{{ category[0] }}">{{ category[0] }}</div>
 			              {% for post in category[1] %}
