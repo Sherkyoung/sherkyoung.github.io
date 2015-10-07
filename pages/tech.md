@@ -1,7 +1,7 @@
 ---
 layout: default
-title: 分类
-permalink: /pages/class.html
+title: 技术
+permalink: /pages/tech.html
 ---
 <div class="home">
 
