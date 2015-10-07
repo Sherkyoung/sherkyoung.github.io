@@ -7,7 +7,7 @@ permalink: /pages/read.html
 <div class="home">
 	<div class="bookpiclist">
 		{% for page in site.posts %}
-				{% if page.categories[0] == '读书' %}
+				{% if page.categories[0] == '书单' %}
 					{% for book in page.books %}
 					<div class="bookpic">
 						<div class="bookpic-wrapper">	
