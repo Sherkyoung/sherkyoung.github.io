@@ -24,6 +24,12 @@ layout: default
 </div>
 
 <div class="prevandnext">
+<div style="margin:0.5em;">
+		<span>本博客欢迎转发，请以链接方式保留原作者信息!</span>  </br>
+		<span>	博客地址：http://sherkyoung.github.io/  </span>  </br>
+		<span>内容系本人学习、研究和总结，如有雷同，实属荣幸！</span>
+	</div>
+	<br/>
 	  {% if page.next %}
 	<div style="margin:0.5em;">
 	<span>上一篇 ：</span><a class="pjaxlink" href="{{ site.url }}{{ page.next.url }}"  title="{{ page.next.title }}">{{ page.next.title }}</a>
@@ -34,12 +40,7 @@ layout: default
 	<span>下一篇 ：</span><a class="pjaxlink" href="{{ site.url }}{{ page.previous.url }}"  title="{{ page.previous.title }}">{{ page.previous.title }}</a>
 	</div>
   {% endif %}
-	<div style="margin:0.5em;">
-		<span>本博客欢迎转发，请以链接方式保留原作者信息!</span>  </br>
-		<span>	博客地址：<http://sherkyoung.github.io/>  </span>  </br>
-		<span>内容系本人学习、研究和总结，如有雷同，实属荣幸！</span>
-	</div>
- 
+	 
 </div>
   
   {% include duoshuo.html %}
