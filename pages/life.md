@@ -5,7 +5,7 @@ permalink: /pages/life.html
 ---
 <div class="home">
 {% for type in site.type %} 
-	{% for category in site.categories %} 
+	{% for category in site.type[1] %} 
 	      		<div class="panel panel-primary">
 	        			<div class="panel-heading center" id="{{ category[0] }}" name="{{ category[0] }}">{{ category[0] }}</div>
 			              {% for post in category[1] %}
