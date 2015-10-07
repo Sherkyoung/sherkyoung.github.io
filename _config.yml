@@ -17,7 +17,7 @@ author:
   link: http://sherkyoung.github.io/
   weibo: http://weibo.com/yangshuailogo
   github: https://github.com/sherkyoung
-  github_username:  sherkyoung
+
 
 
 # 站点信息
@@ -38,11 +38,11 @@ favicon : /assets/img/favicon.ico
 
 #profile 个人信息
 
-profile_desc : 当任何时候觉得累<br>你的大脑就在进化<br> 当任何时候觉得轻松<br>你都在使用你的习惯<br>
+profile_desc : 任谁都有迷茫和困惑<br>我能做的就是不断的求知<br>前进的道路上免不了风雨<br>唯有始终如一<br>
 
 # 首页除了最新文章外显示分类
 cates: 
-- Essay
+#- Essay
 # - Python
 # - OpenStack
 

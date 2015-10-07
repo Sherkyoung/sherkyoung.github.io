@@ -12,7 +12,7 @@ tags:  floodlight-vm
 博客地址：<http://sherkyoung.github.io/>  
 内容系本人学习、研究和总结，如有雷同，实属荣幸！
 
-##前言
+## 前言
 Floodlight官网上有floodlght-vm虚拟机镜像文件下载，今天就来介绍一下如何用floodlight官网下载的虚拟机文件搭建OpenFlow测试平台
 首先得对与这个floodlight-vm有个正确的认识：
 1、这是一个虚拟机文件，可以在虚拟机中直接打开
@@ -27,7 +27,7 @@ http://floodlight-download.projectfloodlight.org/files/floodlight-vm-0.90.zip
  
 知道了以上信息之后就可以愉快的安装floodlight-vm了
 Start！
-##一、安装虚拟机
+## 一、安装虚拟机
 首先不管是你在什么操作系统上，装个虚拟机软件先。建议windows上面装vmware，linux上面装virtualbox。
 以win7上的vmware10.0为例：
 ![](/images/2014-04-16-floodlight-vm/02.png)
@@ -42,7 +42,7 @@ $sudo ./*.sh //*是通配符，你也可以老实的输入.sh文件全名
 运行完这个sh文件之后，就会自动添加一个虚拟机了，前提是你已经安装了虚拟机软件。（写文档时用的不是linux系统不方便截图，见谅！）
 运行虚拟机之后也是和windows下一样。
  
-##二、配置部署
+## 二、配置部署
 首先，登录进系统。用户名为floodlight，默认无密码。
 查看虚拟机IP：
 $ifconfig

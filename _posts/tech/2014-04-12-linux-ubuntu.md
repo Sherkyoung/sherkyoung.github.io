@@ -6,17 +6,14 @@ category: linux
 tags:  ubuntu
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
+## 一、下载wmware10.0软件
 
-
-##一、下载wmware10.0软件
 vmware下载地址http://pan.baidu.com/s/1eQIcJqM
-##二、安装vmware
+
+## 二、安装vmware
+
 Windows安装软件一如既往的下一步到死，有几点最好注意一下：
+
 1、选择自定义安装而不是典型安装
 2、选择安装路径
 ![](/images/2014-04-12-linux-ubuntu/01.png)
@@ -28,19 +25,23 @@ Windows安装软件一如既往的下一步到死，有几点最好注意一下�
 可用注册码5C4A7-6Q20J-6ZD58-K2C72-0AKPE
 ![](/images/2014-04-12-linux-ubuntu/03.png)
  
-##三、下载Ubuntu 镜像文件
+## 三、下载Ubuntu 镜像文件
+
 我这边给的是Ubuntu12.04LTS桌面版的镜像文件下载地址： http://pan.baidu.com/s/1kTJU2f9
  
-##四、安装Ubuntu
+## 四、安装Ubuntu
+
 1、点击创建新的虚拟机
 2、自定义安装
 3、选择ISO文件，点击浏览选到你放Ubuntu的镜像文件的地方
 ![](/images/2014-04-12-linux-ubuntu/04.png)
 
 4、输入用户名、密码，修改主机名
+
 >强烈建议全部设成短一点的，不然你会后悔的
  
 ##五、开始安装Ubuntu
+
 下面重点讲一下在安装时可能报的错误
 
 1、以前安装过vmware，但是版本太老需要更新：
@@ -56,8 +57,6 @@ Windows安装软件一如既往的下一步到死，有几点最好注意一下�
 这个错误在安装之前和安装完毕之后都有可能发生，解决办法很简答，关闭vmware并以管理员身份运行vmware就行。
 当然，也有可能是你建虚拟机的时候给分配的内存超过了系统本身的内存，当然一般不会有这种情况的发生就是了。
  
- 
 基本上除了这些就不怎么会有其他的错误了，安装也就基本完成了!
- 
  
 That’s all!
