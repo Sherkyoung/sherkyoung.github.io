@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Éú»î
+title: ç”Ÿæ´»
 permalink: /pages/life.html
 ---
 <div class="home">
@@ -11,7 +11,7 @@ permalink: /pages/life.html
 			              {% for post in category[1] %}
 			                 <a  href='{{ post.url }}'  class="list-group-item clearfix pjaxlink">
 				            {{post.title}}
-				            <span class="badge">{{ post.date | date:"%YÄê%mÔÂ%dÈÕ" }}</span>
+				            <span class="badge">{{ post.date | date:"%Yå¹´%mæœˆ%dæ—¥" }}</span>
 				     </a>
 			               {% endfor %}
 			</div>
