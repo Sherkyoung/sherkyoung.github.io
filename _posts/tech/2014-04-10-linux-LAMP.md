@@ -6,18 +6,15 @@ category: Linux
 tags:  LAMP
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 ## 一、说明
+
 LAMP就是Linux+Apache2+MySQL+PHP
 只需要简单的配置就能配置一台属于自己的web服务器了
 
 ## 二、安装LAMP
-###1、安装MySQL
+
+### 1、安装MySQL
+
 因为在ubuntu系统下，所以通过apt-get来安装软件
 
 	$su //切换到root账户 
@@ -26,17 +23,21 @@ LAMP就是Linux+Apache2+MySQL+PHP
 	
 然后系统提示你输入两次mysql root账户的密码。
 
-###2、安装apche2
+### 2、安装apche2
 
 	#apt-get install apache2
 
 安装完毕之后，打开浏览器输入：http://202.119.167.244
+
 >注:这是我的ubuntu的IP地址，使用ifconfig命令查看自己的IP地址
+
 此时会出现这个页面：
 ![](/images/2014-04-10-linux-LAMP/01.png)
 
 Apache的默认文档根目录是在ubuntu上的/var/www目录 ，最初里面只有一个index.html这个文档是为了图操作测试用的。配置文件是/ etc/apache2/apache2.conf。配置存储在的子目录在/etc/apache2目录。
-###3、安装PHP
+
+### 3、安装PHP
+
 直接安装PHP5和apache的PHP模块
 
 	#apt-get install php5 libapache2-mod-php5
@@ -47,6 +48,7 @@ Apache的默认文档根目录是在ubuntu上的/var/www目录 ，最初里面�
  
 这时会出现下图情况：
 ![](/images/2014-04-10-linux-LAMP/02.png)
+
 >注:could notreliably determine the server’s fully quality domain name,useing 202.119.167.176 for serverName，但是只要最后显示[OK]就不影响后面的操作。
 
 现在可以测试一下PHP是否安装成功并查看PHP详细信息：
@@ -94,7 +96,9 @@ info.php文件内容
 
 这时再输入网址打开网页：
 ![](/images/2014-04-10-linux-LAMP/05.png)
+
 >用户名是root密码是之前安装mysql是输入两次的密码！
+
 登录成功！！！
 ![](/images/2014-04-10-linux-LAMP/06.png)
 

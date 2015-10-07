@@ -6,13 +6,8 @@ category: SDN
 tags:  floodlight
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
+## Floodlight rest API开发
 
-##Floodlight rest API开发
 利用rest接口编写应用不限于编程语言，基本开发步骤如下：
 1、确定应用所需的网络服务信息
 2、从 Floodlight REST API列表中选择满足服务需求的REST API
@@ -45,7 +40,8 @@ tags:  floodlight
  删除流，因为示例采用的是“静态”设置，因此流表项不会超时失效
  记录已被推送的流，可通过普通文本文件保存流信息
  
-##Floodlight-Test
+## Floodlight-Test
+
 Floodlight-Test是一个测试执行框架，与floodlight共同发布 ，供开发者实行floodlight一体化测试，以及各种扩展开发。
 Floodlight-Test 允许如下开发:
 
@@ -272,7 +268,8 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 		o = net.pingAll()
 	bigtest.Assert(o == 0)
  
-####Unit测试
+#### Unit测试
+
 简介
  Floodlight 采用 Junit 框架和 EasyMock进行单元测试。你可以运行所有Junit测试并且用ant检查单元测试的范围，命令如下：
 
@@ -301,7 +298,7 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 [Using captures with EasyMock](http://blog.fuddi.dk/2009/06/easymock-capture-example.html)
 [EasyMock README](http://easymock.org/EasyMock3_1_Documentation.html)
  
-###控制器基准配置
+### 控制器基准配置
  
 基准配置
 更新 `floodlight properties`文件
@@ -351,7 +348,8 @@ Cbench 有一系列参数. 我们所需的有:
 
 	./cbench -c localhost -p 6633 -m 10000 -l 10 -s 16 -M 1000 -t
  
-###怎样用floodlight满足服务质量
+### 怎样用floodlight满足服务质量
+
 简介
 l   Openflow1.0协议中有设置网络服务类型的方法，就像匹配流的包在某个端口进入某个队列。给使用者提供简单的方法将Qos状态压入交换机。协议1.3将进一步改进， 依旧支持DSCP 或ToS位，并构建深层次的Qos框架，OFconfig还是有重要作用，这样的协议对Qos队列的建立和拆除很有用。
 l 以下示例就是将限速Qos状态压入OVswitches中

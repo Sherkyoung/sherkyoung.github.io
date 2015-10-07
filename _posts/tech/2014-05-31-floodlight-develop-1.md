@@ -6,20 +6,21 @@ category: SDN
 tags:  floodlight
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
+## 架构
 
-##架构
 Floodlight不仅仅是一个支持OpenFLow协议的控制器（FloodlightCOntroller），也是一个基于Floodlight控制器的应用集。
 当用户在OpenFLow网络上运行各种应用程序的时候，Floodlight控制器实现了对OpenFLow网络的监控和查询功能。图0.0显示了Floodlight不同模块之间的关系，这些应用程序构建成java模块，和Floodlight一起编译。同时这些应用程序都是基于REST API的。
-##开始
-###安装指导
-####概述
+
+## 开始
+
+### 安装指导
+
+#### 概述
+
 基于Java的Floodlight可以用标准jak工具或ant编译运行，当然也可以有选择性的在Eclipse上运行。
-####准备工作
+
+#### 准备工作
+
 Linux：
 
 * Ubuntu 10.04（Natty）及以上版本（运行Ant1.8.1及以下版本）:
@@ -34,7 +35,8 @@ Mac
 * JDK:只需要在终端输入命令：‘javac’便可安装
 * Eclipse（非必须 ）
  
-####下载编译
+#### 下载编译
+
 从Github下载并比编译Floodlight
 
 	$git clone git://github.com/floodlight/floodlight.git  
@@ -47,7 +49,9 @@ Mac
 	$java -jar target/floodlight.jar
 	 
 Floodlight就会开始运行，并在控制台打印debug信息
-####Eclipse设置
+
+#### Eclipse设置
+
 通过Eclipse运行、开发、配置Floodlight：
 	
 	$ant eclipse
@@ -70,7 +74,8 @@ Floodlight就会开始运行，并在控制台打印debug信息
 * “Main”使用“net.floodlightcontroller.core.Main”
 * 点击“应用”
  
-####虚拟一个网络
+#### 虚拟一个网络
+
 启动了Floodlight之后，就需要链接到一个OpenFlow的网络。Mininet是最好的网络虚拟工具之一。
 
 * 下载Floodlight-vm机自启动并内嵌Mininet工具。
@@ -85,14 +90,19 @@ Floodlight就会开始运行，并在控制台打印debug信息
 	$ssh -X floodlight@<vm-ip>
 	$sudo wireshark
  
-####下一步
+#### 下一步
+
 阅读完getstart文档之后，可以参阅floodlight开发文档，里面有很多实例和代码。
  
-###可兼容交换机
+### 可兼容交换机
+
 下面列出了可以和Floodlight控制器兼容的交换机
-####虚拟交换机
+
+#### 虚拟交换机
+
 * Open vSwitch（OVS）
-####硬件交换机
+
+#### 硬件交换机
 
 * Arista 7050
 * Brocade MLXe
@@ -113,7 +123,8 @@ Floodlight就会开始运行，并在控制台打印debug信息
 * NetGear 7352SO
 * Pronto (3290, 3295, 3780) - runs the shipping pica8 software
  
-###可支持的拓扑结构
+### 可支持的拓扑结构
+
 Floodlight现在在支持梁中锋不同的包转发应用，这两种应用具有不同的行为，并且向下图的拓扑结构一样运行：
 
 * 在转发方面：在网络中的任意两个终端设备之间进行端到端的数据转发
@@ -140,13 +151,20 @@ l 另外，Floodlight也提供一个Static Flow Entry Pusher应用和一个Circu
 >术语“孤岛”和“集群”是可以互换使用的。一个OpenFlow孤岛/集群就是OpenFlow交换机连接到其中任何设备的集合。类似的，非OpenFlow的孤岛/集群就是任何连接到非OpenFlow交换机的设备。
 
 
-##发布版
-###发行说明
-####Floodlight v0.9发行说明
+## 发布版
+
+### 发行说明
+
+#### Floodlight v0.9发行说明
+
 发布日期：2012年10月
-####概述
+
+#### 概述
+
 Floodlighr v0.9包含了控制器新的RestAPI，新的应用，漏洞修复，新框架测试等
-####更新
+
+#### 更新
+
 REST APIs
 显示如何进行外部连接，通过BDDP发现多跳链路而不是LLDP
  

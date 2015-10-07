@@ -12,9 +12,12 @@ tags:  floodlight
 博客地址：<http://sherkyoung.github.io/>  
 内容系本人学习、研究和总结，如有雷同，实属荣幸！
 
-#开发者文档
-##控制器模块
-###简介：
+# 开发者文档
+
+## 控制器模块
+
+### 简介：
+
 控制器模块实现了大多数应用程序常用的一些功能，例如：
 
 * 发现和揭露网络状态和事件
@@ -401,8 +404,10 @@ Floodlight当前的版本带有基于Mac地址的数据包流的例子。客户�
  
  
  
-###应用模块
-####虚拟网络过滤器（Quantum插件）
+### 应用模块
+
+#### 拟网络过滤器（Quantum插件）
+
 简述：
 虚拟网络过滤器模块是基于虚拟化网络的数据链路层。它允许你在独立的数据链路层上创建多个逻辑链路。这个模块可用于OpenStack的部署或者单例。
  
@@ -594,7 +599,8 @@ Description: 没有任何的rules，发送一个packet_in事件，.防火墙将�
 1.防火墙 模块DELETE REST API功能的调用没有删除交换机上的流表。Rules将会被从控制器存储中删除，当交换机上的流表处理时间超过标准。这意味着在一段时间后，删除规则是有效的。流可以持续存在,只要它在交换机中持续通信.
 2.最初的，TCP/UDP端口范围是通过防火墙rules来支持的。但是，作为OpenFlow流匹配机制不允许指定端口范围,此功能没有实现。
 
-####Port Down Reconciliation 
+#### Port Down Reconciliation 
+
 简介:
 PortDownReconciliation模块的实现是为了在端口关闭的时候处理网络中的流。在PORT_DOWN链路发现更新消息之后，这个模块将会找出并且删除直接指向这个端口的流。所有无效的流都被删除之后，floodlight应该重新评估链路，流量也要采用新的拓扑。如果没有这个模块，流量会持续的进入到这个坏掉的端口，因为流的过期时间还没有到。
 工作原理:
@@ -610,7 +616,9 @@ PortDownReconciliation模块的实现是为了在端口关闭的时候处理网�
 问题和局限:
 1.如果在一个源地址和目的地址的路由中有重叠的交换机，那些重叠的交换机将会因不同的流被统计多次，这就花费了额外的时间，但是对于维护网络中流的完整性，这也是必要的。
 2.这个模块依赖于转发模块实现。
-###模块加载系统
+
+### 模块加载系统
+
 简介:
 Floodlight使用自己的模块系统来决定哪些模块会运行，这个系统的设计目标是：
 1.通过修改配置文件决定哪些模块会被加载
@@ -797,7 +805,8 @@ java -Dnet.floodlightcontroller.restserver.RestApiServer.port=8080 -jar floodlig
 * 每个模块必须有一个0参数(最好是空的)构造函数.做什么应该在构造函数中实现,而不是调用init()。.
 * 模块之间可能没有服务重叠,但是存在功能重叠,例如, LearningSwitch 模块Forwarding都有转发包的方法 Since they do not provide a common service w do not detect and overlap.
  
-####Javadoc entry
+#### Javadoc entry
+
 综述:
 Overview 页面提供了所有的包的摘要,也包含了包集合的说明
 包

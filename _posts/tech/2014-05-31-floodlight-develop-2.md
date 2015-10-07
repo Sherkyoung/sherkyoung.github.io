@@ -6,19 +6,18 @@ category: SDN
 tags:  floodlight
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
+# 用户文档
 
-#用户文档
-##控制器
+## 控制器
+
 Floodlight不仅仅是一个支持OpenFLow协议的控制器（FloodlightCOntroller），也是一个基于Floodlight控制器的应用集。
 当用户在OpenFLow网络上运行各种应用程序的时候，Floodlight控制器实现了对OpenFLow网络的监控和查询功能。图0.0显示了Floodlight不同模块之间的关系，这些应用程序构建成java模块，和Floodlight一起编译。同时这些应用程序都是基于REST API的。
 当运行floodlight时，控制器和一组java应用模块（这些会在floodlight属性文件中载入）开始运行。REST API通过REST端口（默认8080）对所有的运行中的模块开放。
-###Configuration HOWTO
-####选择加载模块
+
+### Configuration HOWTO
+
+#### 选择加载模块
+
 Floodlight可以配置载入不同的模块以适应不停地应用。配置不同的载入模块之后必须重启生效。目前对于Floodlight模块的配置都是通过需在启动时加载的一个配置文件的修改实现的。
 简单的说，用户可以通过以下步骤，找到或控制Floodlight当前的配置:
 
@@ -56,7 +55,9 @@ Xml文件已经包含在Floodlight根目录中。
 	</configuration>
  
 在这个例子中，net,floodlightcontroller包含了所有的floodlight模块，并且具有日志记录级别的信息，因此调试信息并不会出现在控制台中。你可以在logxml文件中指定INFO，WARN和DEBUG的级别。
-###监听地址和端口配置
+
+### 监听地址和端口配置
+
 为了改变主机地址或监听特定服务的端口号，可以在属性配置文件中使用以下的配置参数：
 
 	net.floodlightcontroller.restserver.RestApiServer.host
@@ -67,11 +68,11 @@ Xml文件已经包含在Floodlight根目录中。
 	net.floodlightcontroller.jython.JythonDebugInterface.port
 	
 默认的属性配置文件（例如：`floodlightdefault.properties`）
- 
- 
- 
-###Floodlight REST API
-####虚拟网络过滤器的REST API
+  
+### Floodlight REST API
+
+#### 虚拟网络过滤器的REST API
+
 ![](/images/2014-05-31-floodlight-develop/01.png)
  
 Curl使用样例
@@ -83,16 +84,20 @@ Curl使用样例
 	
 	curl -X PUT -d '{"attachment": {"id": "NetworkId1", "mac": "00:00:00:00:00:08"}}' http://localhost:8080/networkService/v1.1/tenants/default/networks/NetworkId1/ports/port1/attachment
   
-####StaticFlow Pusher API（新）
-#####什么是Static Flow Pusher？
+#### StaticFlow Pusher API（新）
+
+##### 什么是Static Flow Pusher？
+
 Static Flow Pusher是Floodlight的一个模块，通过REST API形式向外曝露，这个接口允许用户手动向OpenFlow网络中插入流表。
  
-#####主动和被动流插入
+##### 主动和被动流插入
+
 OpenFlow支持两种流插入方式：主动式和被动式。当数据包到达OpenFlow交换机但未成功匹配流表时发生被动式流表插入。这个数据包将会被发送到控制器，控制器对数据包进行分析评估，添加相应的流表并允许交换机继续该数据包的转发。另外，也可以在数据包到达交换机之前，控制器可以主动地插入相应流表。
 Floodlight支持这两种的流表插入方式。Static Flow Pusher对于主动插入流表的方式很有帮助。
 注意，在默认情况下，Floodlight载入的转发模块是被动插入流表模式的。如果只使用静态流表，就必须将Forwarding模块从floodlight.properties文件中删除。
  
-#####使用方法
+##### 使用方法
+
 API总结
 ![](/images/2014-05-31-floodlight-develop/05.png) 
 添加一个静态流表
@@ -184,8 +189,10 @@ Static Flow Pusher可以通过编写简单的python代码脚本来控制。例�
 
 	Mininet> h2 ping h3
  
-####Firewall REST API
-#####Firewall REST接口
+#### Firewall REST API
+
+##### Firewall REST接口
+
 防火墙模块提供REST接口服务，该接口实现了采用REST API服务形式的RestletRoutable接口。以下是REST方法的列表：
 ![](/images/2014-05-31-floodlight-develop/08.png)
  
@@ -231,13 +238,16 @@ Curl使用样例
 	curl -X POST -d '{"src-ip": "10.0.0.4/32", "dst-ip": "10.0.0.10/32", "nw-proto":"UDP", "tp-src":"5010", "action":"DENY" }' http://localhost:8080/wm/firewall/rules/json
 	curl -X POST -d '{"src-ip": "10.0.0.10/32", "dst-ip": "10.0.0.4/32", "nw-proto":"UDP", "tp-src":"5010", "actio
  
-####应用
-#####REST应用
+#### 应用
+
+##### REST应用
  
-######Circuit Pusher
+###### Circuit Pusher
+
 Circuit Pusher采用floodlight REST API在所有交换机上创建基于IP地址与指定的优先级两个设备之间路由的一个双向电路即永久性的流表项。
  
 >注意
+
 1. Circuit Pusher 现在只能创建两个IP主机之间的，虽然只是简单的扩展以创建基于CIDR格式的IP前缀（例如：192.168.0.0/16）电路，但是支持Static Flow Pusher。
 2. 在向Circuit Pusher发送restAPIRequest之前,控制器必须已经检测到终端设备的存在（即终端设备已经在网络中发送过数据，最简单的办法就是用网络中任意两台主机ping一下），只有这样控制器才知道这些网络终端设备的接入点从而计算他们的路由。
 3.当前支持的命令格式语法为：
@@ -252,10 +262,9 @@ Circuit Pusher采用floodlight REST API在所有交换机上创建基于IP地址
  
 通过之前创建链路时定义的链接名删除已创建的链路（即3circuits.json文件中的一条记录）
   
-#####应用模块
- 
- 
-######Firewall
+##### 应用模块
+
+###### Firewall
 简介
 Firewall应用已经作为floodlight模块实现，防火墙模块在OpenFlow网络之中强制执行ACL规则（接入控制列表）以确保在网络中的交换机使用的是在packet-in监控行为之下的流。
 ACL规则就是一组交换机入口permit，allow或者deny数据流的条件。
@@ -275,14 +284,17 @@ ACL规则就是一组交换机入口permit，allow或者deny数据流的条件�
 防火墙实现允许规则会产生部分的重叠留空间，这通过判断优先级决定。在下面的简单的例子中，所有送达192.168.1.0/24子网的流除了进入的HTTP（TCP端口80）都被禁止。
 
 >数字越小优先级越高
+
 需要特别注意的是在有通配符的情况。如果一个流表不与第一个流表（最高优先级）但和第二个流表（较低优先级）匹配成功，这个流表将通过Forwawrding转发到交换机，但这个流表不会通配目的端口；然而，在这个流中的特定端口会被指定到流表项中从而使得通过80端口的数据包将不会被交换机丢弃也不会像控制器发送packet-in数据包。
  
 
 REST API
 防火墙模块通过REST接口实现，采用REST API服务形式的RestletRoutable接口。
+
 >（REST方法见P14-P15防火墙REST方法列表）
  
 Curl使用样例
+
 >（详情请见P15防火墙curl样例）
  
 问题和限制
@@ -329,7 +341,7 @@ $sudo mn --controller=rmote --ip=<controller_ip> --mac --topo=tree,3
 7、在mininet中，执行’h1 ping -c1 10.0.0.100’,然后执行’h2 ping -c1 10.0.0.100’。这两次的ping都会成功的轮换调用两台不同的真实主机执行。
  
  
-######OpenStack
+###### OpenStack
  
 安装Floodlight和OpenStack
 概述

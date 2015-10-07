@@ -6,15 +6,11 @@ category: SDN
 tags:  floodlight
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
+## 添加模块
 
-##添加模块
-###创建一个监听模块
-####在Eclipse中添加类
+### 创建一个监听模块
+
+#### 在Eclipse中添加类
 
 * 在floodlight中找出“src/main/java”。
 * 在“src/main/java” 目录下选择“New/Class”.
@@ -205,7 +201,9 @@ Mininet虚拟网络连接floodlight
 	mininet>pingall
 	
 Pingall命令生成的debug信息都将从MACTracker发送到控制台
-##添加模块服务
+
+## 添加模块服务
+
 简介
 控制器由一个负责监听openflow socket并派发时间的核心模块，以及一些向核心模块注册用于处理响应事件的二级模块构成。当控制器启动时，可启用debug log，进而看的这些二级模块的注册过程，示例如下：
 	

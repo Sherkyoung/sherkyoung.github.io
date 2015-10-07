@@ -6,15 +6,11 @@ category: SDN
 tags:  floodlight-vm
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 ## 前言
+
 Floodlight官网上有floodlght-vm虚拟机镜像文件下载，今天就来介绍一下如何用floodlight官网下载的虚拟机文件搭建OpenFlow测试平台
 首先得对与这个floodlight-vm有个正确的认识：
+
 1、这是一个虚拟机文件，可以在虚拟机中直接打开
 2、内嵌wireshark、mininet、floodlight
 3、其中floodlight是开机自启动（floodlight-vm虚拟机一开机floodlight便启动）
@@ -27,7 +23,9 @@ http://floodlight-download.projectfloodlight.org/files/floodlight-vm-0.90.zip
  
 知道了以上信息之后就可以愉快的安装floodlight-vm了
 Start！
-## 一、安装虚拟机
+
+##  一、安装虚拟机
+
 首先不管是你在什么操作系统上，装个虚拟机软件先。建议windows上面装vmware，linux上面装virtualbox。
 以win7上的vmware10.0为例：
 ![](/images/2014-04-16-floodlight-vm/02.png)
@@ -43,12 +41,15 @@ $sudo ./*.sh //*是通配符，你也可以老实的输入.sh文件全名
 运行虚拟机之后也是和windows下一样。
  
 ## 二、配置部署
+
 首先，登录进系统。用户名为floodlight，默认无密码。
 查看虚拟机IP：
 $ifconfig
 打开浏览器输入以下网址：
 http://202.119.167.202:8080/index.html 
+
 >(其中IP地址更成上一步骤中查看到的IP地址)
+
 ![](/images/2014-04-16-floodlight-vm/03.png)
  
 当然了，又是这个画面……其实floodlight-vm在开机时就已经启动了floodlight，甚至在还没有登录进系统的时候就已经可以登录这个网站了。
@@ -212,7 +213,8 @@ sources.list文件
 这个根据个人喜好进行安装不同的图形界面，我个人安装的ubuntu的桌面，比较大安装起来也比较繁琐，而且最重要的是、、、显示效果也不尽人意……所以不建议安装这个图形界面。
 安装图形界面什么的没什么好说的了，以后有时间在补上吧。
  
-##三、联合调试
+## 三、联合调试
+
 全部准备妥当之后当然是进行抓包测试啦！
 这里参看我的另外一篇博文：
 http://sherkyoung.github.io/blog/2014/04/12/floodlight-mininet/

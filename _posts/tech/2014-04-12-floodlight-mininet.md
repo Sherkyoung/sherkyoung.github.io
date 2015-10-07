@@ -6,24 +6,21 @@ category: SDN
 tags:  floodlight+mininet
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@杨帅Login](http://weibo.com/yangshuailogo)；   
-博客地址：<http://sherkyoung.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
+## 安装虚拟机
 
-
-##安装虚拟机
-###1、安装VmwareWorkstation
+### 1、安装VmwareWorkstation
 
 附赠可用注册码5C4A7-6Q20J-6ZD58-K2C72-0AKPE
 ![](/images/2014-04-12-floodlight-mininet/01.png)
  
-###2、安装虚拟机可能出现的问题：
+### 2、安装虚拟机可能出现的问题：
+
 见另外一片博文: http://sherkyoung.github.io/blog/2014/04/12/linux-ubuntu/
  
-##安装floodlight及mininet
-###1、安装floodlight
+## 安装floodlight及mininet
+
+### 1、安装floodlight
+
 Ctrl+Alt+T打开控制台输入：
 
 	$sudo apt-get update
@@ -37,7 +34,8 @@ Ctrl+Alt+T打开控制台输入：
 打开浏览器输入：localhost:8080/ui/index.html进入如下界面则说明安装成功：
 ![](/images/2014-04-12-floodlight-mininet/02.png)
  
-###2、安装mininet
+### 2、安装mininet
+
 新建一个终端控制台，输入：
 
 	$sudo apt-get install mininet
@@ -71,14 +69,16 @@ Mininet同时也是开机自启动，关闭自启动：
 	
 这里自带的脚本会帮你处理好一切的，安心好了。不过建议看一下mininet的INSTALL文件，看一下对系统有什么要求。（我比较懒，我没看>p<）。
 同样需要注意命令安装的情况，关闭自启动。
-##安装wireshark
+
+## 安装wireshark
+
 新建终端控制台，输入：
 	
 	$sudo apt-get install wireshark
 	
 这样全部的准备工作已经做完了
  
-##联机调试抓包
+## 联机调试抓包
 在进行抓包之前将之前运行的floodlight和mininet全部关闭
 1、运行floodlight
 
