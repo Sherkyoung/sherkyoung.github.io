@@ -63,7 +63,7 @@ permalink: /pages/about.html
 	<table class="table table-striped">
 		<tr>
 			<td>姓  名：</td>    
-			<td>杨  帅 （1991）</td>
+			<td>杨  帅 （1992）</td>
 		</tr>
 		<tr>
 			<td>学  历：</td>    
