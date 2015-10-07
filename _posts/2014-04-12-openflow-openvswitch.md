@@ -2,7 +2,7 @@
 layout: post
 title: 【译】OpenvSwitch + OpenFlow:Let’s get start(翻译自国外某大牛)
 description: 【译】OpenvSwitch + OpenFlow:Let’s get start(翻译自国外某大牛)
-category: 技术
+category: SDN
 tags:  ovs
 ---
 

@@ -2,8 +2,8 @@
 layout: post
 title: LAMP配置web服务器(Ubuntu12.04LTS)
 description: LAMP配置web服务器(Ubuntu12.04LTS)
-category: 技术
-tags:  Linux
+category: Linux
+tags:  LAMP
 ---
 
 声明：  

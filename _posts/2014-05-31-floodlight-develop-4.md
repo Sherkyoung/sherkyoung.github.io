@@ -2,8 +2,8 @@
 layout: post
 title: 【译】FloodLight官网开发者文档四
 description: 【译】FloodLight官网开发者文档四
-category: 技术
-tags:  SDN
+category: SDN
+tags:  floodlight
 ---
 
 声明：  

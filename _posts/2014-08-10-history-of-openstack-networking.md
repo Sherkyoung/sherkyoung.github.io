@@ -2,8 +2,8 @@
 layout: post
 title: OpenStack网络的前世今生
 description: OpenStack网络的前世今生
-category: 技术
-tags:  SDN
+category: 云计算
+tags:  openstack
 ---
 
 声明：  

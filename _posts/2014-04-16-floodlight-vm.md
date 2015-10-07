@@ -2,8 +2,8 @@
 layout: post
 title: 使用Floodlight-vm（官网提供）搭建OpenFlow测试平台
 description: 使用Floodlight-vm（官网提供）搭建OpenFlow测试平台
-category: 技术
-tags:  SDN
+category: SDN
+tags:  floodlight-vm
 ---
 
 声明：  

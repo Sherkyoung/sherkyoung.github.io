@@ -2,8 +2,8 @@
 layout: post
 title: 虚拟机安装Ubuntu教程
 description: 虚拟机安装Ubuntu教程
-category: 技术
-tags:  Linux
+category: linux
+tags:  ubuntu
 ---
 
 声明：  
