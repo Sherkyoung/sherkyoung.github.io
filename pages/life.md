@@ -5,8 +5,9 @@ permalink: /pages/life.html
 ---
 <div class="home">
 
+	var flag = 0
 	{% for category in site.categories %} 
-		{% flag = 0 %}
+
 		{% for post in category[1] %}
 			{% if post.type == 'life' %}
 				{% if flag == 0 %}
