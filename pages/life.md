@@ -5,14 +5,14 @@ permalink: /pages/life.html
 ---
 <div class="home">
 
-	var flag = 0
+	<%var flag = 0%>
 	{% for category in site.categories %} 
 
 		{% for post in category[1] %}
 			{% if post.type == 'life' %}
 				{% if flag == 0 %}
 					<div class="panel panel-primary">
-					flag+1
+					<% flag+1 %>
 				{% endif %}
 					<div class="panel-heading center" id="{{ category[0] }}" name="{{ category[0] }}">{{ category[0] }}</div>
 						<a  href='{{ post.url }}'  class="list-group-item clearfix pjaxlink">
@@ -20,7 +20,7 @@ permalink: /pages/life.html
 				            <span class="badge">{{ post.date | date:"%Y年%m月%d日" }}</span>
 				        </a>
 			{% endif %} 
-			flag=0
+			<%flag=0%>
 	   {% endfor %}
 				</div>
 				
