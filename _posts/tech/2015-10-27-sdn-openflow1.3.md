@@ -6,6 +6,8 @@ category: SDN
 tags:  OpenFlow1.3
 ---
 
+学习OpenFlow1.3协议、做相关实验时所思所学记录，欢迎小伙伴们批评指正。:)
+
 ## 1 消息
 
 ## 1.1 消息定义
