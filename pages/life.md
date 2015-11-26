@@ -4,10 +4,7 @@ title: 生活
 permalink: /pages/life.html
 ---
 <div class="home">
-
-	<%var flag = 0%>
 	{% for category in site.categories %} 
-
 		{% for post in category[1] %}
 			{% if post.type == 'life' %}
 				{% if flag == 0 %}
@@ -20,10 +17,8 @@ permalink: /pages/life.html
 				            <span class="badge">{{ post.date | date:"%Y年%m月%d日" }}</span>
 				        </a>
 			{% endif %} 
-			<%flag=0%>
 	   {% endfor %}
-				</div>
-				
+				</div>	
 	{% endfor %}
 	
 </div>
