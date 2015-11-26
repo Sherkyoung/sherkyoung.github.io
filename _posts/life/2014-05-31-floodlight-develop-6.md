@@ -2,7 +2,7 @@
 layout: post
 title: 【译】FloodLight官网开发者文档一
 description: 【译】FloodLight官网开发者文档一
-category: [life, 旅游]
+category: 旅游
 tags:  floodlight
 ---
 
