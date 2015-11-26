@@ -5,8 +5,10 @@ permalink: /pages/life.html
 ---
 <div class="home">
 	{% for category in site.categories %} 
+		{%if category.[0] == "美食" %}
+		{%if category.[0] == "旅游" %}
+		{%if category.[0] == "感悟" %}
 		<div class="panel panel-primary">
-		{%if category.first == "life" %}
 			<div class="panel-heading center" id="{{ category[0] }}" name="{{ category[0] }}">{{ category[0] }}</div>
 				{% for post in category[1] %}
 				<a  href='{{ post.url }}'  class="list-group-item clearfix pjaxlink">
@@ -16,5 +18,8 @@ permalink: /pages/life.html
 				{% endfor %}
 		</div>
 		{% endif %}
+		{% endif %}
+		{% endif %}
+		
 	{% endfor %}
 </div>
