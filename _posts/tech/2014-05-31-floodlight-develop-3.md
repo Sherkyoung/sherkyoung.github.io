@@ -1,8 +1,9 @@
 ---
 layout: post
+category: tech
+type : SDN
 title: 【译】FloodLight官网开发者文档三
 description: 【译】FloodLight官网开发者文档三
-category: SDN
 tags:  floodlight
 ---
 
