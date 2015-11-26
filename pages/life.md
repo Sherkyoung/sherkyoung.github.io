@@ -5,7 +5,7 @@ permalink: /pages/life.html
 ---
 <div class="home">
 	{% for category in site.categories %}
-	{% if category.first == 'life' %}
+	{% if category[0] == 'life' %}
 		<h2>{{ category | first }}</h2>
 			<ul class="arc-list">
 			{% for post in category.last %}
