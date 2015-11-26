@@ -6,7 +6,7 @@ permalink: /pages/tech.html
 <div class="home">
 
 	{% for category in site.categories %} 
-		{%if category.[0] != "旅游" %}
+		{%if category.[0] != "旅游"  && ategory.[0] != "美食" %}
 		<div class="panel panel-primary">
 			<div class="panel-heading center" id="{{ category[0] }}" name="{{ category[0] }}">{{ category[0] }}</div>
 				{% for post in category[1] %}
