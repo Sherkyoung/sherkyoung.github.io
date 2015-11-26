@@ -10,53 +10,11 @@ permalink: /pages/about.html
 	<hr>
 	<br>
 	<p>
-	博客用<a href="http://jekyllrb.com/"><code>jekyll</code></a>（可将纯文本转化为静态网站和博客的语言）,<code>html</code>,<code>css</code>等构建。博客部署在<code>github</code>服务器上，前端采用<code>bootstrap</code>栅格式布局，可自适应移动端浏览器。
-	写博客的目的很单纯，就是记笔记，方便在不同终端上随时查看，偶尔也会记录身边发生的事情。
+		好久没有打理博客了，真心佩服那些一直不断更新博客的大牛：搞好自己本职同时，还能抽出那么多的时间、经历写博客，将自己的知识、经验分享给大家。建立个人博客的初衷，一是将自己的所学所得记录下来，督促自己；二是分享出来和网络中的小伙伴们一起讨论、学习。勿忘本心啊！
+		ps：关于这个博客顶部的导航栏。额，说实话，当初为了实现这个二级分类索引，费了很大一翻心思。最后还是妥协了，用了一种近乎愚蠢的方式实现。有兴趣的小伙伴可以去看一眼源码：<code>/pages</code>目录下的<code>tech.md</code>、<code>life.md</code>、<code>book.md</code>中，希望小伙伴能指教优秀的方法。
+		博客用<a href="http://jekyllrb.com/"><code>jekyll</code></a>搭建。
 	</p>
-	<br>
-	
-	<h3><i class="fa fa-laptop"></i>&nbsp;IT技能</h3>
-	<hr>
-	<br>
-    <div class="skills">
-   	<div id="main" style="height:400px"></div>
 
-
-
-    <!--
-        <div class="skillbar clearfix" data-percent="80%">
-            <div class="skillbar-title"><span>Java</span></div>
-            <div class="skillbar-bar"></div>
-            <div class="skill-bar-percent">80%</div>
-        </div>
-
-        <div class="skillbar clearfix" data-percent="60%">
-            <div class="skillbar-title"><span>C++</span></div>
-            <div class="skillbar-bar"></div>
-            <div class="skill-bar-percent">60%</div>
-        </div>
-		
-        <div class="skillbar clearfix" data-percent="60%">
-            <div class="skillbar-title"><span>java script</span></div>
-            <div class="skillbar-bar"></div>
-            <div class="skill-bar-percent">60%</div>
-        </div>
-
-        <div class="skillbar clearfix" data-percent="60%">
-            <div class="skillbar-title"><span>HTML</span></div>
-            <div class="skillbar-bar"></div>
-            <div class="skill-bar-percent">60%</div>
-        </div>
-		
-		<div class="skillbar clearfix" data-percent="60%">
-            <div class="skillbar-title"><span>CSS</span></div>
-            <div class="skillbar-bar"></div>
-            <div class="skill-bar-percent">60%</div>
-        </div>
-		-->
-    </div>	
-
-	
 	<br>
 	<h3><i class="fa fa-user"></i>&nbsp;基本信息</h3>
 	<hr>
@@ -71,7 +29,7 @@ permalink: /pages/about.html
 		</tr>
 		<tr>
 			<td>学  校：</td>    
-			<td>南京工程学院通信工程系</td>
+			<td>南京工程学院通信工程系2015届</td>
 		</tr>
 	</table>
 
@@ -113,7 +71,7 @@ permalink: /pages/about.html
 	<hr>
 	<br>
 	<p>
-	刚刚毕业，努力成长中的Java码农。
+	刚毕业，努力成长中的Java码农。什么都去了解，什么都去学习，什么都不精通，并正为此情况郁郁寡欢中。
 	</p>
 	<br>
 
@@ -121,7 +79,7 @@ permalink: /pages/about.html
 	<hr>
 	<br>
 	<p>
-	世界这么大 到处去看看
+	原先是想成为铲平锦鲤，后来发现还是得从做好码农开始啊，新目标FullStack！
 	</p>
 	<br>
 	<br> 
