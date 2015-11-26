@@ -4,21 +4,14 @@ title: 生活
 permalink: /pages/life.html
 ---
 <div class="home">
-	{% for category in site.categories %} 
-		{% for post in category[1] %}
-			{% if post.type == 'life' %}
-				{% if flag == 0 %}
-					<div class="panel panel-primary">
-					<% flag+1 %>
-				{% endif %}
-					<div class="panel-heading center" id="{{ category[0] }}" name="{{ category[0] }}">{{ category[0] }}</div>
-						<a  href='{{ post.url }}'  class="list-group-item clearfix pjaxlink">
-								{{post.title}}
-				            <span class="badge">{{ post.date | date:"%Y年%m月%d日" }}</span>
-				        </a>
-			{% endif %} 
-	   {% endfor %}
-				</div>	
-	{% endfor %}
+	{% for category in site.categories %}
+<h2>{{ category | first }}</h2>
+</span>{{ category | last | size }}</span>
+<ul class="arc-list">
+    {% for post in category.last %}
+        <li>{{ post.date | date:"%d/%m/%Y"}}<a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+</ul>
+{% endfor %}
 	
 </div>
