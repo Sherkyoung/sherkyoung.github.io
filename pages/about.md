@@ -10,8 +10,12 @@ permalink: /pages/about.html
 	<hr>
 	<br>
 	<p>
-		好久没有打理博客了，真心佩服那些一直不断更新博客的大牛：搞好自己本职同时，还能抽出那么多的时间、经历写博客，将自己的知识、经验分享给大家。建立个人博客的初衷，一是将自己的所学所得记录下来，督促自己；二是分享出来和网络中的小伙伴们一起讨论、学习。勿忘本心啊！
+		好久没有打理博客了，真心佩服那些一直不断更新博客的大牛：搞好自己本职同时，还能抽出那么多的时间、精力写博客，将自己的知识、经验分享给大家。建立个人博客的初衷，一是将自己的所学所得记录下来，督促自己；二是分享出来和网络中的小伙伴们一起讨论、学习。勿忘本心啊！
+	</p>
+	<p>
 		ps：关于这个博客顶部的导航栏。额，说实话，当初为了实现这个二级分类索引，费了很大一翻心思。最后还是妥协了，用了一种近乎愚蠢的方式实现。有兴趣的小伙伴可以去看一眼源码：<code>/pages</code>目录下的<code>tech.md</code>、<code>life.md</code>、<code>book.md</code>中，希望小伙伴能指教优秀的方法。
+	</p>
+	<p>
 		博客用<a href="http://jekyllrb.com/"><code>jekyll</code></a>搭建。
 	</p>
 
@@ -42,7 +46,7 @@ permalink: /pages/about.html
 				Email：
 			</td>  
 			<td>
-				sherkyoung@gmail.com			
+				<a href="Mailto:sherkyoung@gmail.com">sherkyoung@gmail.com</a>
 			</td>
 		</tr>
 
