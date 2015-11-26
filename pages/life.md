@@ -12,6 +12,6 @@ permalink: /pages/life.html
 				<li>{{ post.date | date:"%d/%m/%Y"}}<a href="{{ post.url }}">{{ post.title }}</a></li>
 			{% endfor %}
 			</ul>
-	{% end if %}
+	{% endif %}
 	{% endfor %}
 </div>
