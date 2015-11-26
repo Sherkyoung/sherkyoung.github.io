@@ -3,6 +3,7 @@ layout: post
 title: 从零开始学python——颜色的16进制于RGB之间的转换
 description: 从零开始学python——颜色的16进制于RGB之间的转换
 category: Python
+tags:  Python
 ---
 
 在学习openstack的时候，发现openstack是python开发的；学习mininet自定义拓扑，发现mininet是python开发的；看看ryu，还是python开发的……于是心中升起了自学python的想法。这是第一次动手写了个python的小程序，功能只是将输入的十六进制字符串转换成RGB格式输出，或者将RGB格式的输入转换成对应16进制输出。很简单的小功能，也让我费了一番功夫，因为每次调用函数，我都的去查怎么去写，返回值是什么。ps这个小程序的并没有很严格输入校验，随便乱输入一些字符、数字是会报错的，哈哈XD！

@@ -101,11 +101,9 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 	#!/usr/bin/env python
 	## Creates a tree,4 topology to test different firewall rules
 	## with ping and iperf (TCP/UDP, differed ports)                                                                                   ## @author KC Wang
-	 
 	# import a number of basic bigtest libraries
 	import bigtest.controller
 	import bigtest
-	 
 	# import a number of useful python utilities.
 	# This particular example does REST API based testing, hence urllib is useful for sending REST commands and
 	# json is used for parsing responses
@@ -114,13 +112,11 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 	import time
 	from util import *
 	import httplib
-	 
 	# bigtest function to connect to two active tester VMs
 	# make sure you already started the VM and have done bm register-vms-floodlight
 	# (with the correct two nodes indicated in build/Makefile.workspace)
 	env = bigtest.controller.TwoNodeTest()
 	log = bigtest.log.info
-	 
 	# use the first tester VM's floodlight controller
 	# since its a linux node, we use its bash mode as command line interface
 	controllerNode = env.node1()
@@ -128,44 +124,37 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 	controllerIp = controllerNode.ipAddress()
 	controllerCli.gotoBashMode()
 	controllerCli.runCmd("uptime")
-	 
 	# use the second tester VM to run mininet
 	mininetNode = env.node2()
 	mininetCli = mininetNode.cli()
 	# this starts mininet from linux console and enters mininet's command line interface
 	mininetCli.gotoMininetMode("--controller=remote --ip=%s --mac --topo=tree,4" % controllerIp)
-	 
 	# this function uses REST interface to keep on querying floodlight until the specified switches are all
 	# connected to the controller correctly and seeing each other in the same connected cluster
 	switches = ["00:00:00:00:00:00:00:1%c" % x for x in ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']]
 	controllerNode.waitForSwitchCluster(switches)
- 
+
+
 现在你已经添加了一些用于不同情况的测试命令，确保floodlight正常工作。
 
 	....
 	# issuing a mininet command
 	# pingall should succeed since firewall disabled
 	x = mininetCli.runCmd("pingall")
-	 
 	# return is stored in x and the bigtest.Assert method can check for a specific string in the response
 	bigtest.Assert("Results: 0%" in x)
-	 
 	# you can use python's sleep to time out previous flows in switches
 	time.sleep(5)
-	 
 	# Sending a REST API command
 	command = "http://%s:8080/wm/firewall/module/enable/json" % controllerIp
 	x = urllib.urlopen(command).read()
 	bigtest.Assert("running" in x)
-	 
 	...
-	 
 	# clean up all rules - testing delete rule
 	# first, retrieve all rule ids from GET rules
 	command = "http://%s:8080/wm/firewall/rules/json" % controllerIp
 	x = urllib.urlopen(command).read()
 	parsedResult = json.loads(x)
-	 
 	for i in range(len(parsedResult)):
 		# example sending a REST DELETE command.  Post can be used as well.
 		params = "{\"ruleid\":\"%s\"}" % parsedResult[i]['ruleid']
@@ -175,9 +164,7 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 		connection.request("DELETE", command, params)
 		x = connection.getresponse().read()
 		bigtest.Assert("Rule deleted" in x)
-	 
 	...
-	 
 	# iperf TCP works, UDP doesn't
 	mininetCli.runCmd("h3 iperf -s &")
 	x = mininetCli.runCmd("h7 iperf -c h3 -t 2")
@@ -194,33 +181,26 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 	from mininet.log import setLogLevel
 	import bigtest.controller
 	from bigtest.util.context import NetContext, EnvContext
-	 
 	def addHost(net, N):
 		name= 'h%d' % N
 		ip = '10.0.0.%d' % N
 		return net.addHost(name, ip=ip)
-	 
 	def MultiControllerNet(c1ip, c2ip):
 		"Create a network with multiple controllers."
-	 
 		net = Mininet(controller=RemoteController, switch=UserSwitch)
-	 
 		print "Creating controllers"
 		c1 = net.addController(name = 'RemoteFloodlight1', controller = RemoteController, defaultIP=c1ip)
 		c2 = net.addController(name = 'RemoteFloodlight2', controller = RemoteController, defaultIP=c2ip)
-	 
 		print "*** Creating switches"
 		s1 = net.addSwitch( 's1' )
 		s2 = net.addSwitch( 's2' )
 		s3 = net.addSwitch( 's3' )
 		s4 = net.addSwitch( 's4' )
-	 
 		print "*** Creating hosts"
 		hosts1 = [ addHost( net, n ) for n in 3, 4 ]
 		hosts2 = [ addHost( net, n ) for n in 5, 6 ]
 		hosts3 = [ addHost( net, n ) for n in 7, 8 ]
 		hosts4 = [ addHost( net, n ) for n in 9, 10 ]
-	 
 		print "*** Creating links"
 		for h in hosts1:
 			s1.linkTo( h )
@@ -230,38 +210,27 @@ Floodlight 严格执行质保联系，floodlight中所有模块既要单独测�
 			s3.linkTo( h )
 		for h in hosts4:
 			s4.linkTo( h )
-	 
 		s1.linkTo( s2 )
 		s2.linkTo( s3 )
 		s4.linkTo( s2 )
-	 
 		print "*** Building network"
 		net.build()
-	 
 		# In theory this doesn't do anything
 		c1.start()
 		c2.start()
-	 
 		#print "*** Starting Switches"
 		s1.start( [c1] )
 		s2.start( [c2] )
 		s3.start( [c1] )
 		s4.start( [c1] )
-	 
 		return net
-	 
-	 
 	with EnvContext(bigtest.controller.TwoNodeTest()) as env:
 	  log = bigtest.log.info
-	 
 	  controller1 = env.node1()
 	  cli1 = controller1.cli()
-	 
 	  controller2 = env.node2()
 	  cli2 = controller2.cli()
-	 
 	  print "ip1:%s ip2:%s" % (controller1.ipAddress(), controller2.ipAddress())
-	 
 	  with NetContext(MultiControllerNet(controller1.ipAddress(), controller2.ipAddress())) as net:
 		sleep(20)
 		## net.pingAll() returns percentage drop so the bigtest.Assert(is to make sure 0% dropped)
