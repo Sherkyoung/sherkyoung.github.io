@@ -107,7 +107,6 @@ tags:  floodlight
 package net.floodlightcontroller.statics;  
   
 import net.floodlightcontroller.core.module.IFloodlightService;  
-  
 	/**  
 	 * The service registry  
 	 * @author yangshuai  
