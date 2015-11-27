@@ -26,7 +26,7 @@ Mininet作为一个轻量级软定义网络研发和测试平台，其主要特�
 
 mininet的安装有三种方法一种是下载mininet虚拟机镜像文件安装一个虚拟机，一种是下载源代码进行编译安装，最后一种是通过命令行安装。这里选用第三种安装方式：输入如下命令进行安装：
 
- $sudo apt-get install mininet
+	$sudo apt-get install mininet
  
 如果之前安装过openvswitch将会报错，这是只需要输入以下命令删除ovs残存文件即可：
 
@@ -67,29 +67,29 @@ mininet必须用root身份启动：
  
 ## 1.1.4 Mininet命令：
 
-* 设置拓扑
+(1) 设置拓扑
 `--topo`:用于指定OpenFlow的网络拓扑。Mininet已经为大多数应用实现了五种类型的OpenFlow网络拓扑，分别为：tree、single、reversed、linear和minimal。默认情况下，创建的是minimal拓扑。
 设置自定义拓扑
---custom`：在上述已有拓扑的基础上，Mininet支持自定义拓扑，使用一个简单的Python API即可，例如导入自定义的mytopo：
+`--custom`：在上述已有拓扑的基础上，Mininet支持自定义拓扑，使用一个简单的Python API即可，例如导入自定义的mytopo：
 
 	$sudo mn --custom ~/mininet/custom/topo-2sw-2host.py –topo mytopo --test pingall 
 	
-* 设置交换机
+(2)设置交换机
 `--switch`：可以有三类openflow交换机，分别是：kernel内核状态、user用户状态以及ovsk Open vSwith状态。当然kerner和ovsk的性能和吞吐量会高一些，通过运行命令：
-	
+
 	$sudo mn –switch ovsk –test iperf
 	
 可以进行iperf的测试结果得知。
-* 设置控制器
+(2)设置控制器
 `--controller`：通过参数设置的控制器可以是Mininet默认的控制器、NOX或者虚拟机之外的远端控制器，如Floodlight、POX以及NOX等控制器都可以使用，指定远端控制器的方法如下：
 
 	$sudo mn --controller=remote,ip=[controller IP],port=[controllerlistening port]
 	
-* 设置MAC地址
+(3) 设置MAC地址
 `--mac`：通过设置MAC地址的作用是增强设备MAC地址的易读性，即将交换机和主机的MAC地址设置为一个较小的、唯一的、易读的ID，以便在后续工作中减少对设备识别的难度。
-* 设置主机类型
+(4)设置主机类型
 `--host`：主机类型只要有两种类型，分别是默认的Host类型以及CPULimitedHost类型，其中CPULimitedHost类型用于将CPU的部分资源分配给虚拟主机使用。
-* 设置链路属性
+(5)设置链路属性
 `--link`：链路属性可以是默认Link及TCLink。将链路类型指定为tc后，可以进一步指定具体参数。具体参数如下命令显示：
 
 	--link tc,bw=<>,delay=<>,loss=<>,max_que_size=<>
@@ -131,29 +131,22 @@ mininet必须用root身份启动：
 	<tr>
 		<td>source</td><td>从外部文件中读入命令</td>
 	</tr>
-	tr>
 		<td>dpctl</td><td>在所有交换机上用dptcl 执行相关命令，本地为tcp 127.0.0.1:6634</td>
 	</tr>
-	tr>
 		<td>link</td><td>禁用或启用两个节点之间的链路</td>
 	</tr>
-	tr>
 		<td>nodes</td><td>列出所有的节点信息</td>
 	</tr>
-	tr>
 		<td>pingall</td><td>所有host节点之间互ping</td>
 	</tr>
-	tr>
 		<td>py</td><td>执行python表达式</td>
 	</tr>
-	tr>
 		<td>sh</td><td>运行外部shell命令</td>
 	</tr>
-	tr>
 		<td>quit/exit</td><td>退出</td>
 	</tr>
 </table>
-* 其他注意：mininet远程连接FlowVisor之后如果需要断开连接，直接在mininet>命令行输入quit或exit即可。但有时会出现即便退出mininet但是仍然显示有ovs连接到FlowVisor，这时只需要输入以下命令删除一下mn的缓存配置信息即可：
+(6)其他注意：mininet远程连接FlowVisor之后如果需要断开连接，直接在mininet>命令行输入quit或exit即可。但有时会出现即便退出mininet但是仍然显示有ovs连接到FlowVisor，这时只需要输入以下命令删除一下mn的缓存配置信息即可：
 
 	$sudo mn -c
 
@@ -163,16 +156,16 @@ mininet必须用root身份启动：
 
 ## 1.2.1 ODL安装、启动
 
-* 获取ODL代码
+(1)获取ODL代码
 
 	$git clone https://git.opendaylight.org/gerrit/p/controller.git 
 	
-* 编译Controller：
+(2)编译Controller：
 	
 	$cd controller/opendaylight/distribution/opendaylight
 	$mvn clean install
 	
-* 执行controller：
+(3)执行controller：
 	
 	$cd controller/opendaylight/distribution/opendaylight/target/distributions.oepndaylight-OSGIpackage/opendaylight
 	$./run.sh
@@ -195,26 +188,28 @@ mininet必须用root身份启动：
 启动ODL Controller之后可以从网页登录http:\\localhost:8080进行验证：
 ![](/images/2014-08-06-mininet-flowvisor-odl/3.png) 
 
-## 1.4 联机实验
+## 1.3 联机实验
 
 FlowVisor作为透明的中间层，对于mininet来说FlowVisor就是控制器，而对于ODL控制器来说FlowVisor就是OVS。
 
-## 1.4.1 mininet连接FlowVisor
+## 1.3.1 mininet连接FlowVisor
 
-* 修改FlowVisor配置文件
+(1)修改FlowVisor配置文件
 FlowVisor的配置文件是/etc/flowvisor/config.json图中标出的两个修改后的值，一个是监听端口6666，原默认值为6633；一个是web端口8888，源默认端口是8081。这样修改是为了防止以后与控制器端口混淆。
 ![](/images/2014-08-06-mininet-flowvisor-odl/4.png) 
-* 启动FlowVisor
+(2)启动FlowVisor
 	可以采用以下命令启动FlowVisor：
 	
 	$cd flowvisor
 	$nohup flowvisor /etc/flowvisor/config.json > /etc/null &
 	
 以上的命令可以让FlowVisor后台启动并且不再控制台输出任何信息
-* 启动mininet：
+(3)启动mininet：
 	输入以下命令：
 
 	$sudo mn --controller=remote,ip=192.168.119.129,port=6666
+	
+![](/images/2014-08-06-mininet-flowvisor-odl/5.png)
 	
 >注：这里的端口是监听端口，而不是web端口（8888），web端口在FlowVisor查看信息时会经常使用到。
 这时新开一个控制台输入如下命令，查看datapaths信息，可以看到mininet虚拟的交换机已经连接到FlowVisor上：
@@ -224,10 +219,10 @@ FlowVisor的配置文件是/etc/flowvisor/config.json图中标出的两个修改
 注意这里的端口号是web端口号
 ![](/images/2014-08-06-mininet-flowvisor-odl/5.png) 
 再输入以下命令查看6666监听端口情况：
-![](/images/2014-08-06-mininet-flowvisor-odl/6.png) 
 
 	$netstat -an | grep 6666
 	
+![](/images/2014-08-06-mininet-flowvisor-odl/6.png) 
 这时在返回mininet中使用ping命令，用h1 ping h2，就会发现两者已经无法ping通而且无法使用mininet的link命令建立h1与h2之间的链路：
 ![](/images/2014-08-06-mininet-flowvisor-odl/7.png) 
 
@@ -262,4 +257,5 @@ Opendaylight：
 Floodlight：
 ![](/images/2014-08-06-mininet-flowvisor-odl/15.png) 
 ![](/images/2014-08-06-mininet-flowvisor-odl/16.png) 
+
 >问题：floodlight中无法正常显示主机信息
