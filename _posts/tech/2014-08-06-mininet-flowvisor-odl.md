@@ -80,16 +80,16 @@ mininet必须用root身份启动：
 	$sudo mn –switch ovsk –test iperf
 	
 可以进行iperf的测试结果得知。
-(2)设置控制器
+(3)设置控制器
 `--controller`：通过参数设置的控制器可以是Mininet默认的控制器、NOX或者虚拟机之外的远端控制器，如Floodlight、POX以及NOX等控制器都可以使用，指定远端控制器的方法如下：
 
 	$sudo mn --controller=remote,ip=[controller IP],port=[controllerlistening port]
 	
-(3) 设置MAC地址
+(4) 设置MAC地址
 `--mac`：通过设置MAC地址的作用是增强设备MAC地址的易读性，即将交换机和主机的MAC地址设置为一个较小的、唯一的、易读的ID，以便在后续工作中减少对设备识别的难度。
-(4)设置主机类型
+(5)设置主机类型
 `--host`：主机类型只要有两种类型，分别是默认的Host类型以及CPULimitedHost类型，其中CPULimitedHost类型用于将CPU的部分资源分配给虚拟主机使用。
-(5)设置链路属性
+(6)设置链路属性
 `--link`：链路属性可以是默认Link及TCLink。将链路类型指定为tc后，可以进一步指定具体参数。具体参数如下命令显示：
 
 	--link tc,bw=<>,delay=<>,loss=<>,max_que_size=<>
@@ -229,15 +229,15 @@ FlowVisor的配置文件是/etc/flowvisor/config.json图中标出的两个修改
 ## 1.4 FlowVisor连接控制器
 
 这里为了更提高实验的可靠性，我运行了两个控制器：floodlight和opendaylight。
-* 创建切片
+(1)创建切片
 使用FlowVisor创建切片，这里两个ip分别对应两个不同主机的控制器，192.168.119.130对应的是ODL控制器，192.168.5.79对应的是Floodlight控制器。
 Opendaylight和floodlight默认的端口都是6633，这里并未做修改
 ![](/images/2014-08-06-mininet-flowvisor-odl/8.png) 
-* 查看slice信息
+(2)查看slice信息
 ![](/images/2014-08-06-mininet-flowvisor-odl/9.png) 
-* 创建flowspace
+(3)创建flowspace
 ![](/images/2014-08-06-mininet-flowvisor-odl/10.png) 
-* 验证连接
+(3)验证连接
 在opendaylight控制器所在主机打开控制台输入以下命令：
 
 	$netstat -an | grep 6633
@@ -248,7 +248,7 @@ Opendaylight和floodlight默认的端口都是6633，这里并未做修改
 	$netstat -an 
 	
 ![](/images/2014-08-06-mininet-flowvisor-odl/12.png) 
-*登录控制器页面
+(4)登录控制器页面
 此时登录控制器页面查看连接设备信息只能看到交换机信息，需要在mininet中执行pingall命令，才能显示主机信息：
 ![](/images/2014-08-06-mininet-flowvisor-odl/13.png) 
 然后分别打开控制器页面查看信息：
