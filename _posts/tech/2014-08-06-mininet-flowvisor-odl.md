@@ -226,7 +226,7 @@ FlowVisor的配置文件是/etc/flowvisor/config.json图中标出的两个修改
 这时在返回mininet中使用ping命令，用h1 ping h2，就会发现两者已经无法ping通而且无法使用mininet的link命令建立h1与h2之间的链路：
 ![](/images/2014-08-06-mininet-flowvisor-odl/7.png) 
 
-## 4.4.2 FlowVisor连接控制器
+## 1.4 FlowVisor连接控制器
 
 这里为了更提高实验的可靠性，我运行了两个控制器：floodlight和opendaylight。
 * 创建切片
