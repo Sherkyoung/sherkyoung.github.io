@@ -1,7 +1,7 @@
 ---
 layout: post
-title: OpenStack网络的前世今生
-description: OpenStack网络的前世今生
+title: 【转】OpenStack网络的前世今生
+description: 【转】OpenStack网络的前世今生
 category: 云计算
 tags:  openstack
 ---
