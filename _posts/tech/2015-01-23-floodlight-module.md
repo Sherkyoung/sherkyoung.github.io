@@ -2,7 +2,7 @@
 layout: post
 title: floodlight添加模块实验
 description: floodlight添加模块实验
-category: floodlight
+category: SDN
 tags:  floodlight
 ---
 
