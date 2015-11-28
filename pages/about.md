@@ -78,6 +78,33 @@ permalink: /pages/about.html
 	刚毕业，努力成长中的Java码农。什么都去了解，什么都去学习，什么都不精通，并正为此情况郁郁寡欢中。
 	</p>
 	<br>
+	
+	<br>
+	<h3><i class="fa fa-list-alt"></i>&nbsp;工作经历</h3>
+	<hr>
+	<table class="table table-striped">
+		<tr>
+			<td>
+				<h1>实习生</h1>
+				<h2>江苏省未来网络创新研究院</h2>
+				<h2>2014年7月-2015年7月</h2>
+				<a>1.基于</a><br/>
+				<a>1.基于</a>
+			</td>  
+		</tr>
+
+		<tr>
+			<td>
+				github：
+			</td>    
+		</tr>
+
+		<tr>
+			<td>
+				微博：
+			</td> 
+		</tr>
+	</table>
 
 	<h3><i class="fa fa-heart"></i>&nbsp;人生理想</h3>
 	<hr>
