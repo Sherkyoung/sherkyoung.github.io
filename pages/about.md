@@ -86,7 +86,7 @@ permalink: /pages/about.html
 		<tr>
 			<td>
 				<h4>实习生</h4>
-				<h5  style="color:#ddd">江苏省未来网络创新研究院</h5>
+				<h5>江苏省未来网络创新研究院</h5>
 				<h6  style="color:#ddd">2014年7月-2015年7月</h6>
 				<h6>&nbsp;1.OpenFlow1.0，OpenFlow1.3协议解读</h6>
 				<h6>&nbsp;2.基于SDN控制器的北向应用开发</h6>
