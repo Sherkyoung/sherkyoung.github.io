@@ -2,7 +2,7 @@
 layout: post
 title: 为博客添加音乐播放器
 description: 为博客添加音乐播放器
-category: tech
+category: Web
 tags:  [网易云音乐外链播放器,jplayer]
 ---
 
