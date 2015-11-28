@@ -85,7 +85,7 @@ permalink: /pages/about.html
 	<table class="table table-striped">
 		<tr>
 			<td>
-				<h4>实习生</h1>
+				<h4>实习生</h4>
 				<h5>江苏省未来网络创新研究院</h5>
 				<h6>2014年7月-2015年7月</h6>
 				<h6>1.基于</h6><br/>
