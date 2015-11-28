@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: 需要更多更加疯狂的学习
 description: 需要更多更加疯狂的学习
 category: 感悟
