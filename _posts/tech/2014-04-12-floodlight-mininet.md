@@ -3,7 +3,7 @@ layout: post
 title: 基于ubuntu12.04的Floodlight+mininet搭建OpenFlow测试平台
 description: 基于ubuntu12.04的Floodlight+mininet搭建OpenFlow测试平台
 category: SDN
-tags:  floodlight+mininet
+tags:  [floodlight,mininet]
 ---
 
 ## 安装虚拟机
