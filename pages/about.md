@@ -85,25 +85,20 @@ permalink: /pages/about.html
 	<table class="table table-striped">
 		<tr>
 			<td>
-				<h1>实习生</h1>
-				<h2>江苏省未来网络创新研究院</h2>
-				<h2>2014年7月-2015年7月</h2>
-				<a>1.基于</a><br/>
-				<a>1.基于</a>
+				<h4>实习生</h1>
+				<h5>江苏省未来网络创新研究院</h5>
+				<h6>2014年7月-2015年7月</h6>
+				<h6>1.基于</h6><br/>
+				<h6>1.基于</h6>
 			</td>  
 		</tr>
 
 		<tr>
 			<td>
-				github：
+				java工程师
 			</td>    
 		</tr>
 
-		<tr>
-			<td>
-				微博：
-			</td> 
-		</tr>
 	</table>
 
 	<h3><i class="fa fa-heart"></i>&nbsp;人生理想</h3>
