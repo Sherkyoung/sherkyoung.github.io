@@ -23,7 +23,7 @@ tags:  [网易云音乐外链播放器,jplayer]
 这里先贴上生成外链的代码：
 
 	<iframe class="recentcome box-shadow" frameborder="no" border="0" marginwidth="0" marginheight="0" width=402 height=450 src="http://music.163.com/outchain/player?type=0&id=112515886&auto=1&height=430"></iframe>
-	
+
 很简单的一行代码，这里需要注意的就是`src="http://music.163.com/outchain/player?type=0&id=112515886&auto=1&height=430"`中的`id=112515886`，这个id就是当前歌单所对应的id。
 这时候之前保存下来的不能生成外链的页面就起到作用了，用文本编辑器打开`.html`文件,这一行被注释中的就是你需要的id了，替换掉上面代码中id吧，这样你就能各种自定义歌单了。
 ![](/images/2015-11-28-music-outlink/2.png)
@@ -54,22 +54,22 @@ tags:  [网易云音乐外链播放器,jplayer]
 		  mp3: "http://rm.sina.com.cn/wm/VZ2010050511043310440VK/music/MUSIC1005051622027270.mp3",
 		  poster: "images/3.jpg"
 	  }];
-	  
+
 	  var cssSelector = {
 		jPlayer: "#jquery_jplayer",
 		cssSelectorAncestor: ".music-player"
 	  };
-	  
+
 	  var options = {
 		swfPath: "Jplayer.swf",
 		supplied: "ogv, m4v, oga, mp3"
 	  };
-	  
+
 	  var myPlaylist = new jPlayerPlaylist(cssSelector, playlist, options);
 	});
 
 `reset.css`
-	
+
 	html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
 
 `style.css`
@@ -283,6 +283,3 @@ tags:  [网易云音乐外链播放器,jplayer]
 ## 效果图
 ![](/images/2015-11-28-music-outlink/3.png)
 ![](/images/2015-11-28-music-outlink/4.png)
-
-
-

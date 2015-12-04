@@ -44,7 +44,9 @@ Atom官网的下载`<a href="https://atom.io/packages/">packages</a>`。
 
 	>aom install
 	
-显示`install done`之后打开Atom编辑器，同时按下`ctrl+alt+o`，开始感受这duangduang的效果吧：）
+显示`install done`之后打开Atom编辑器，任意打开一个文件，同时按下`ctrl+alt+r`，然后再同时按下`ctrl+alt+o`，开始感受这duangduang的效果吧：）
+
+>实际上，图个新鲜，玩一会儿之后就觉得没什么意思了。。。
 
 
 
