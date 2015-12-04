@@ -47,3 +47,6 @@ Atom官网的下载`<a href="https://atom.io/packages/">packages</a>`。
 显示`install done`之后打开Atom编辑器，同时按下`ctrl+alt+o`，开始感受这duangduang的效果吧：）
 
 
+
+
+
