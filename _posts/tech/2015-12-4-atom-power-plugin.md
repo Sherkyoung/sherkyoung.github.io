@@ -32,7 +32,7 @@ Atom 是专门为程序员推出的一个跨平台文本编辑器。具有简洁
 
 ## 下载windows installer
 
-下载地址<a href="https://atom.io/">`Atom官网`，ps：似乎需要翻墙。这个默认是会安装到C盘下面的，有强迫症的慎入。
+下载地址`<a href="https://atom.io/">Atom官网`，ps：似乎需要翻墙。这个默认是会安装到C盘下面的，有强迫症的慎入。
 ![](/images/2015-12-4-atom-power-plugin/2.gif)
 
 ## 安装主题
