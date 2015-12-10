@@ -15,12 +15,12 @@ tags:  [tmux]
 
 由于`linux`系统的很多发布版系统中存在`apt`、`yum`此类工具，安装变得尤为便捷。
 
-  //RHEL
-  #yum update
-  #yum install tmux
-  //Debain
-  #apt-get update
-  #apt-get install tmux
+	//RHEL
+	#yum update
+	#yum install tmux
+	//Debain
+	#apt-get update
+	#apt-get install tmux
 
 当然使用以上命令时，你得保证你的linux主机能连接到互联网。
 同时`Tmux`配合`vim`使用风味更加
