@@ -33,7 +33,7 @@ Atom 是专门为程序员推出的一个跨平台文本编辑器。具有简洁
 ## 下载windows installer
 
 下载地址`<a href="https://atom.io/">Atom官网`，ps：似乎需要翻墙。这个默认是会安装到C盘下面的，有强迫症的慎入。
-![](/images/2015-12-4-atom-power-plugin/2.gif)
+![](/images/2015-12-4-atom-power-plugin/2.png)
 
 ## 安装主题
 
@@ -42,7 +42,7 @@ Atom官网的下载`<a href="https://atom.io/packages/">packages</a>`。
 
 拷贝到安装目录下的`.atom\packages\`目录下,或者直接`CD`到该目录下,使用git将`github`上的代码拉下来。并`cd`到该目录下执行：
 
-	>aom install
+	>apm install
 	
 显示`install done`之后打开Atom编辑器，任意打开一个文件，同时按下`ctrl+alt+r`，然后再同时按下`ctrl+alt+o`，开始感受这duangduang的效果吧：）
 

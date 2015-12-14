@@ -47,7 +47,7 @@ tags:  [tmux]
 
 创建一个新会话(session)：
 
-  #tmux new -s [会话名称]
+	#tmux new -s [会话名称]
 
 多会话之间切换:
 
