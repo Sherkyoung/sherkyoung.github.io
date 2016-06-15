@@ -74,7 +74,7 @@ Floodlight就会开始运行，并在控制台打印debug信息
 * “Main”使用“net.floodlightcontroller.core.Main”
 * 点击“应用”
  
-#### 虚拟一个网络
+#### 创建一个虚拟网络
 
 启动了Floodlight之后，就需要链接到一个OpenFlow的网络。Mininet是最好的网络虚拟工具之一。
 
