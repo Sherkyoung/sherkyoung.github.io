@@ -75,7 +75,7 @@ permalink: /pages/about.html
 	<hr>
 	<br>
 	<p>
-	刚毕业，努力成长中的Java码农。什么都去了解，什么都去学习，什么都不精通，并正为此情况郁郁寡欢中。
+	成长中的java码农……
 	</p>
 	<br>
 	
@@ -85,19 +85,27 @@ permalink: /pages/about.html
 	<table class="table table-striped">
 		<tr>
 			<td>
-				<h4>实习生</h4>
+				<h4>Java软件工程师&产品经理</h4>
 				<h5 style=""><b>江苏省未来网络创新研究院</b></h5>
-				<h6  style="color:#ddd">2014年7月-2015年7月</h6>
-				<h6>&nbsp;1.OpenFlow1.0，OpenFlow1.3协议解读</h6>
-				<h6>&nbsp;2.基于SDN控制器的北向应用开发</h6>
-				<h6>&nbsp;3.运营系统网站开发；</h6>
+				<h6  style="color:#ddd">2014年7月-2017年3月</h6>
+				<h6>&nbsp;1.了解了一点OpenFlow协议</h6>
+				<h6>&nbsp;2.学习了一点计算机网络知识</h6>
+				<h6>&nbsp;3.掌握了一点java开发技巧</h6>
+				<h6>&nbsp;4.知道了一点交换机原理</h6>
+				<h6>&nbsp;5.经历了一点课程教授</h6>
 				</td>  
 		</tr>
-
 		<tr>
 			<td>
-				java工程师
-			</td>    
+				<h4>Java软件开发工程师</h4>
+				<h5 style=""><b>苏宁云商股份有限公司</b></h5>
+				<h6  style="color:#ddd">2017年3月-至今</h6>
+				<h6>&nbsp;1.了解了一点征信知识</h6>
+				<h6>&nbsp;2.学习了一点大公司的生存之道</h6>
+				<h6>&nbsp;3.掌握了一点java开发技巧</h6>
+				<h6>&nbsp;4.知道了一点当红开源中间件</h6>
+				<h6>&nbsp;5.经历了一点苏宁大促</h6>
+			</td>  
 		</tr>
 
 	</table>
@@ -106,7 +114,7 @@ permalink: /pages/about.html
 	<hr>
 	<br>
 	<p>
-	原先是想成为铲平锦鲤，后来发现还是得从做好码农开始啊，新目标FullStack！
+		成为国内java开发中牛逼吹的最好的游戏视频UP主。
 	</p>
 	<br>
 	<br> 
